@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SGBackend.Data;
 
@@ -10,9 +11,11 @@ using SGBackend.Data;
 namespace Lagom.Data.Migrations
 {
     [DbContext(typeof(LagomDbContext))]
-    partial class LagomDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250304213937_FirstSchema")]
+    partial class FirstSchema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

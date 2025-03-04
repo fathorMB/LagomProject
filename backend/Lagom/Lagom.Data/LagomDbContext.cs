@@ -18,8 +18,6 @@ namespace SGBackend.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Claim> Claims { get; set; }
         public DbSet<UsersClaims> UsersClaims { get; set; }
-        public DbSet<AppLanguage> AppLanguages { get; set; }
-        public DbSet<AppMessage> AppMessages { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -32,7 +30,6 @@ namespace SGBackend.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             SystemUsersModelCreator.OnModelCreating(modelBuilder);
-            AppMessagesModelCreator.OnModelCreating(modelBuilder);
         }
     }
 }

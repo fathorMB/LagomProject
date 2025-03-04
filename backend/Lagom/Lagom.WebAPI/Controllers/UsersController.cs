@@ -10,16 +10,14 @@ namespace Lagom.WebAPI.Controllers
     public class UsersController : ControllerBase
     {
         private IUserService _userService;
-        private IMessageTranslationService _messageTranslationService;
 
         private string _credentialsRequiredMessageCode = "login.credentials.required";
         private string _credentialsInvalidMessageCode = "login.credentials.invalid";
         private string _userCreationErrorMessageCode = "user.creation.error";
 
-        public UsersController(IUserService userService, IMessageTranslationService messageTranslationService)
+        public UsersController(IUserService userService)
         {
             _userService = userService;
-            _messageTranslationService = messageTranslationService;
         }
 
         [HttpPost("authenticate")]
@@ -30,13 +28,13 @@ namespace Lagom.WebAPI.Controllers
 
             if (string.IsNullOrEmpty(request.Username) || string.IsNullOrEmpty(request.Password))
             {
-                return BadRequest(await _messageTranslationService.GetMessageAsync(_credentialsRequiredMessageCode, request.AppLanguageId));
+                return BadRequest("Username and password must be provided.");
             }
 
             var response = await _userService.Authenticate(request);
 
             if (response == null)
-                return BadRequest(await _messageTranslationService.GetMessageAsync(_credentialsInvalidMessageCode, request.AppLanguageId));
+                return BadRequest("Invalid credentials");
 
             return Ok(response);
         }
@@ -52,7 +50,7 @@ namespace Lagom.WebAPI.Controllers
             var createdUser = await _userService.AddUser(request);
 
             if (createdUser == null)
-                return BadRequest(await _messageTranslationService.GetMessageAsync(_userCreationErrorMessageCode, request.AppLanguageId));
+                return BadRequest("User creation failed.");
 
             return Ok(await _userService.AddUser(request));
         }

@@ -17,7 +17,6 @@ namespace Lagom.WebAPI.Startup
                 options.UseSqlServer(webApplicationBuilder.Configuration.GetConnectionString("LagomDBConnectionString"));
             });
             webApplicationBuilder.Services.Configure<AppSettings>(webApplicationBuilder.Configuration.GetSection("AppSettings"));
-            webApplicationBuilder.Services.AddScoped<IMessageTranslationService, MessageTranslationService>();
             webApplicationBuilder.Services.AddScoped<IUserService, UserService>();
         }
 

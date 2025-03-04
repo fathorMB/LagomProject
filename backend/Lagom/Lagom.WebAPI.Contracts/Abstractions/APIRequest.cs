@@ -6,9 +6,6 @@ namespace Lagom.WebAPI.Contracts.Abstractions
     {
         public string RequestId { get; }
 
-        [DefaultValue(1)]
-        public int AppLanguageId { get; set; }
-
         protected APIRequest()
         {
             RequestId = Guid.NewGuid().ToString();
