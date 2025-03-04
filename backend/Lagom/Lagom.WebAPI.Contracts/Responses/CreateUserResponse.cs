@@ -10,7 +10,7 @@ namespace Lagom.WebAPI.Contracts.Responses
         public required UserContract User { get; set; }
 
         [SetsRequiredMembers]
-        public CreateUserResponse(CreateUserRequest request, UserContract user) : base(request)
+        public CreateUserResponse(CreateUserRequest request, UserContract user, BusinessServiceResponseStatus businessServiceStatus, string[] businessServiceMessages) : base(request, businessServiceStatus, businessServiceMessages)
         {
             User = user;
         }

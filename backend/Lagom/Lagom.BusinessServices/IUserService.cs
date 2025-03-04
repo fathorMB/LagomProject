@@ -6,9 +6,10 @@ namespace Lagom.BusinessServices
 {
     public interface IUserService
     {
-        Task<AuthenticateResponse?> Authenticate(AuthenticateRequest request);
+        Task<AuthenticateResponse> Authenticate(AuthenticateRequest request);
+        Task<CreateUserResponse> AddUser(CreateUserRequest request);
+
         Task<IEnumerable<UserContract>> GetAll();
-        Task<UserContract?> GetById(int id);
-        Task<CreateUserResponse?> AddUser(CreateUserRequest request);
+        Task<UserContract> GetById(int id);
     }
 }

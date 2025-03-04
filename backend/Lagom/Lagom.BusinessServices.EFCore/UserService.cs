@@ -2,6 +2,7 @@
 using Lagom.Common;
 using Lagom.Common.Helpers;
 using Lagom.Model;
+using Lagom.WebAPI.Contracts.Abstractions;
 using Lagom.WebAPI.Contracts.DTOs;
 using Lagom.WebAPI.Contracts.Requests;
 using Lagom.WebAPI.Contracts.Responses;
@@ -28,22 +29,22 @@ namespace Lagom.BusinessServices.EFCore
             _mapper = mapper;
         }
 
-        public async Task<AuthenticateResponse?> Authenticate(AuthenticateRequest model)
+        public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest model)
         {
             string passwordHash = MD5Encoder.CreateMD5(model.Password);
 
             var user = await _db.Users.SingleOrDefaultAsync(x => x.Username == model.Username && x.AccessKeyHash == passwordHash);
 
             // return null if user not found
-            if (user == null) return null;
+            if (user == null) return new AuthenticateResponse(model, null, string.Empty, BusinessServiceResponseStatus.Error, new string[] { "Authentication failed." });
 
             // authentication successful so generate jwt token
             var token = await GenerateJwtToken(user);
             var mapUser = await GetByIdInternal(user.Id);
 
-            if (mapUser == null) return null;
+            if (mapUser == null) return new AuthenticateResponse(model, null, string.Empty, BusinessServiceResponseStatus.CompletedWithErrors, new string[] { "Something went wrong. Please contact system administrator." });
 
-            return new AuthenticateResponse(model, mapUser, token);
+            return new AuthenticateResponse(model, mapUser, token, BusinessServiceResponseStatus.Completed, new string[] {"Authentication successful."});
         }
 
         public async Task<IEnumerable<UserContract>> GetAll()
@@ -58,32 +59,39 @@ namespace Lagom.BusinessServices.EFCore
             return result;
         }
 
-        public async Task<UserContract?> GetById(int id)
+        public async Task<UserContract> GetById(int id)
         {
             return await GetByIdInternal(id);
         }
 
-        public async Task<CreateUserResponse?> AddUser(CreateUserRequest request)
+        public async Task<CreateUserResponse> AddUser(CreateUserRequest request)
         {
             var duplicate = await _db.Users.FirstOrDefaultAsync(x => x.Username == request.User.Username);
 
             if (duplicate != null)
             {
-                return null;
+                return new CreateUserResponse(request, new UserContract(), BusinessServiceResponseStatus.Error, new string[] { $"A User with username {request.User.Username} already exists." }); ;
             }
 
-            await _db.Users.AddAsync(new User()
+            try
             {
-                AccessKeyHash = MD5Encoder.CreateMD5(request.Password),
-                FirstName = request.User.FirstName,
-                LastName = request.User.LastName,
-                Username = request.User.Username,
-                IsActive = true
-            });
+                await _db.Users.AddAsync(new User()
+                {
+                    AccessKeyHash = MD5Encoder.CreateMD5(request.Password),
+                    FirstName = request.User.FirstName,
+                    LastName = request.User.LastName,
+                    Username = request.User.Username,
+                    IsActive = true
+                });
 
-            await _db.SaveChangesAsync();
+                await _db.SaveChangesAsync();
 
-            return new CreateUserResponse(request, _mapper.Map<UserContract>(await _db.Users.FirstOrDefaultAsync(x => x.Username == request.User.Username)));
+                return new CreateUserResponse(request, _mapper.Map<UserContract>(await _db.Users.FirstOrDefaultAsync(x => x.Username == request.User.Username)), BusinessServiceResponseStatus.Completed, new string[] { $"A User with username {request.User.Username} has been created." });
+            }
+            catch (Exception ex)
+            {
+                return new CreateUserResponse(request, new UserContract(), BusinessServiceResponseStatus.Error, new string[] { "An error occurred while creating the User.", ex.Message });
+            }
         }
         // helper methods
         private async Task<string> GenerateJwtToken(User user)

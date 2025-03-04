@@ -47,11 +47,6 @@ namespace Lagom.WebAPI.Controllers
         {
             request.User.Id = 0;
 
-            var createdUser = await _userService.AddUser(request);
-
-            if (createdUser == null)
-                return BadRequest("User creation failed.");
-
             return Ok(await _userService.AddUser(request));
         }
     }

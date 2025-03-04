@@ -10,7 +10,7 @@ namespace Lagom.WebAPI.Contracts.Responses
         public required string Token { get; set; }
 
         [SetsRequiredMembers]
-        public AuthenticateResponse(APIRequest request, UserContract user, string token) : base(request)
+        public AuthenticateResponse(APIRequest request, UserContract user, string token, BusinessServiceResponseStatus businessServiceStatus, string[] businessServiceMessages) : base(request, businessServiceStatus, businessServiceMessages)
         {
             User = user;
             Token = token;
