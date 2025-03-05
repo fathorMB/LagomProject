@@ -17,7 +17,7 @@ body {
   --vex-sidenav-item-dropdown-gap: theme("space.3");
 
   // Toolbar
-  --vex-toolbar-height: 0px;
+  --vex-toolbar-height: 32px;
 
   // Secondary Toolbar
   --vex-secondary-toolbar-height: 0px;
@@ -32,7 +32,7 @@ body {
 
   // Page Layouts
   --vex-page-layout-header-height: 100px;
-  --vex-page-layout-toolbar-height: 0px;
+  --vex-page-layout-toolbar-height: 64px;
 
   // Misc
   --vex-blink-scrollbar-width: 12px;
