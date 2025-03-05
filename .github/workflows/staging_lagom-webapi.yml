@@ -1,23 +1,26 @@
 name: Build and Deploy Lagom.WebAPI
 
 on:
+  # 1. Run build checks on pull requests into `staging`.
+  pull_request:
+    branches:
+      - staging
+    types:
+      - opened
+      - synchronize
+      - reopened
+  # 2. Run build + deploy on pushes (including PR merges) to `staging`.
   push:
     branches:
       - staging
-    paths:
-      - backend/**
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
-    branches:
-      - staging
-  workflow_dispatch:
 
 jobs:
   build:
     name: Build Lagom.WebAPI
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
+
+    # Run this job for both PR checks and direct pushes:
+    if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}
 
     steps:
       - name: Checkout repository
@@ -30,6 +33,10 @@ jobs:
 
       - name: Build Lagom.WebAPI
         run: dotnet build backend/Lagom/Lagom.WebAPI/Lagom.WebAPI.csproj --configuration Release
+
+      # Optional: add test step here if desired
+      # - name: Test Lagom.WebAPI
+      #   run: dotnet test backend/Lagom/Lagom.WebAPI/Lagom.WebAPI.csproj --configuration Release
 
       - name: Publish Lagom.WebAPI
         run: dotnet publish backend/Lagom/Lagom.WebAPI/Lagom.WebAPI.csproj --configuration Release --output ${{env.DOTNET_ROOT}}/myapp
@@ -44,12 +51,13 @@ jobs:
     name: Deploy Lagom.WebAPI to Azure Web App
     runs-on: ubuntu-latest
     needs: build
+
+    # Only run deploy when it's a push to `staging`, not a pull_request event:
+    if: ${{ github.event_name == 'push' }}
+
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    permissions:
-      id-token: write
-      contents: read
 
     steps:
       - name: Download build artifact
