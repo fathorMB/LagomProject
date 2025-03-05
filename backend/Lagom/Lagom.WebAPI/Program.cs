@@ -28,7 +28,7 @@ namespace Lagom.WebAPI
             else
                 HTTPPipelineStartup.AddServices(builder);
 
-            // Trigger BE pipeline
+            // Trigger BE pipeline 2
             // Add SignalR services and the background hosted service
             builder.Services.AddSignalR();
             builder.Services.AddHostedService<SignalRProbeService>();

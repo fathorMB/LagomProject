@@ -3,9 +3,13 @@ name: Build and Deploy Lagom.WebAPI
 on:
   push:
     branches:
-      - main
+      - staging
     paths:
       - backend/**
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - staging
   workflow_dispatch:
 
 jobs:
