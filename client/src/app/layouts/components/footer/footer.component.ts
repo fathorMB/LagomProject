@@ -13,10 +13,13 @@ import { environment } from 'src/environments/environment';
 export class FooterComponent implements OnInit, OnDestroy {
 
   apiURL: string;
+  wsURL: string;
 
   constructor() {
     this.apiURL = environment.apiEndpoint;
+    this.wsURL = environment.wsEndpoint;
     console.log(this.apiURL);
+    console.log(this.wsURL);
   }
 
 
