@@ -7,43 +7,82 @@ on:
     paths:
       - client/**
   pull_request:
-    types: [opened, synchronize, reopened, closed]
     branches:
       - staging
+    paths:
+      - client/**
+    types: [opened, synchronize, closed]
 
 jobs:
-  build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+  # 1) BUILD JOB
+  build_job:
+    name: Build Job
     runs-on: ubuntu-latest
-    name: Build and Deploy Job
-    permissions:
-       id-token: write
-       contents: read
+
+    # Run for:
+    #  - any push to staging
+    #  - any pull_request *except* when it's closed
+    if: >
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && github.event.action != 'closed')
+
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: true
           lfs: false
+
+      - name: Install dependencies
+        run: npm install --prefix ./client
+
+      - name: Build the client
+        run: npm run build --prefix ./client
+
+      # If you want to test or lint, add extra steps here
+      # e.g.
+      # - name: Run tests
+      #   run: npm run test --prefix ./client
+
+      # This completes the "Build" portion of the workflow.
+
+  # 2) DEPLOY JOB
+  deploy_job:
+    name: Deploy to Azure Static Web Apps
+    runs-on: ubuntu-latest
+    needs: build_job  # depends on the build job
+    # Only run on push (including merges to staging)
+    if: github.event_name == 'push'
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          lfs: false
+
       - name: Install OIDC Client from Core Package
         run: npm install @actions/core@1.6.0 @actions/http-client
+
       - name: Get Id Token
         uses: actions/github-script@v6
         id: idtoken
         with:
-           script: |
-               const coredemo = require('@actions/core')
-               return await coredemo.getIDToken()
-           result-encoding: string
+          script: |
+            const core = require('@actions/core')
+            return await core.getIDToken()
+          result-encoding: string
+
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
+          # Use your SWA token from Secrets
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_THANKFUL_OCEAN_015A5AF03 }}
           action: "upload"
-          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "./client" # App source code path
-          api_location: "" # Api source code path - optional
-          output_location: "dist/vex" # Built app content directory - optional
+          app_location: "./client" # Where your source is
+          output_location: "dist/vex" # Where your built site gets placed
+          api_location: "" # if you don't have an API folder
           github_id_token: ${{ steps.idtoken.outputs.result }}
-          ###### End of Repository/Build Configurations ######
