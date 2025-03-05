@@ -5,6 +5,8 @@ on:
   pull_request:
     branches:
       - staging
+    paths:
+      - backend/**
     types:
       - opened
       - synchronize
@@ -13,6 +15,8 @@ on:
   push:
     branches:
       - staging
+    paths:
+      - backend/**
 
 jobs:
   build:
