@@ -15,6 +15,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { VexBreadcrumbsComponent } from '@vex/components/vex-breadcrumbs/vex-breadcrumbs.component';
 import { VexSecondaryToolbarComponent } from '@vex/components/vex-secondary-toolbar/vex-secondary-toolbar.component';
+import { VexPageLayoutComponent } from "../../../../@vex/components/vex-page-layout/vex-page-layout.component";
+import { VexPageLayoutHeaderDirective } from "../../../../@vex/components/vex-page-layout/vex-page-layout-header.directive";
+import { VexPageLayoutContentDirective } from "../../../../@vex/components/vex-page-layout/vex-page-layout-content.directive";
 
 @Component({
   selector: 'vex-dashboard-analytics',
@@ -31,8 +34,11 @@ import { VexSecondaryToolbarComponent } from '@vex/components/vex-secondary-tool
     WidgetLargeGoalChartComponent,
     WidgetQuickValueCenterComponent,
     WidgetLargeChartComponent,
-    WidgetTableComponent
-  ]
+    WidgetTableComponent,
+    VexPageLayoutComponent,
+      VexPageLayoutHeaderDirective,
+    VexPageLayoutContentDirective
+]
 })
 export class DashboardAnalyticsComponent {
   tableColumns: TableColumn<Order>[] = [
