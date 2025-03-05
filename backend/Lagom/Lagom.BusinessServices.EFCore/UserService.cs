@@ -100,14 +100,14 @@ namespace Lagom.BusinessServices.EFCore
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = await Task.Run(() =>
             {
-                var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+                var key = Encoding.ASCII.GetBytes(_appSettings.JWTSecret);
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = new ClaimsIdentity(new[] { new System.Security.Claims.Claim("id", user.Id.ToString()) }),
-                    Expires = DateTime.UtcNow.AddMinutes(_appSettings.TokenExpirationInMinutes),
+                    Expires = DateTime.UtcNow.AddMinutes(_appSettings.JWTTokenExpirationInMinutes),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-                    Issuer = _appSettings.Issuer,
-                    Audience = _appSettings.Audience
+                    Issuer = _appSettings.JWTIssuer,
+                    Audience = _appSettings.JWTAudience
                 };
                 return tokenHandler.CreateToken(tokenDescriptor);
             });
