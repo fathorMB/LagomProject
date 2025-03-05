@@ -14,7 +14,6 @@ import { WidgetAssistantComponent } from '../components/widgets/widget-assistant
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { VexBreadcrumbsComponent } from '@vex/components/vex-breadcrumbs/vex-breadcrumbs.component';
-import { VexSecondaryToolbarComponent } from '@vex/components/vex-secondary-toolbar/vex-secondary-toolbar.component';
 import { VexPageLayoutComponent } from "../../../../@vex/components/vex-page-layout/vex-page-layout.component";
 import { VexPageLayoutHeaderDirective } from "../../../../@vex/components/vex-page-layout/vex-page-layout-header.directive";
 import { VexPageLayoutContentDirective } from "../../../../@vex/components/vex-page-layout/vex-page-layout-content.directive";
@@ -25,7 +24,6 @@ import { VexPageLayoutContentDirective } from "../../../../@vex/components/vex-p
   styleUrls: ['./dashboard-analytics.component.scss'],
   standalone: true,
   imports: [
-    VexSecondaryToolbarComponent,
     VexBreadcrumbsComponent,
     MatButtonModule,
     MatIconModule,

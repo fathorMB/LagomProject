@@ -78,7 +78,7 @@
 .vex-sidenav-toolbar__container {
   background: var(--vex-sidenav-background);
 
-  @apply sticky top-0 z-10;
+  @apply sticky top-10 z-10;
 }
 
 .sidenav-toolbar {
