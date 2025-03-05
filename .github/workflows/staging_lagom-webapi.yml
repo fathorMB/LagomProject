@@ -54,6 +54,9 @@ jobs:
   deploy:
     name: Deploy Lagom.WebAPI to Azure Web App
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     needs: build
 
     # Only run deploy when it's a push to `staging`, not a pull_request event:
