@@ -16,7 +16,6 @@ import { ConfigPanelComponent } from '../components/config-panel/config-panel.co
 import { MatDialogModule } from '@angular/material/dialog';
 import { BaseLayoutComponent } from '../base-layout/base-layout.component';
 import { MatDrawerMode, MatSidenavModule } from '@angular/material/sidenav';
-import { SearchComponent } from '../components/toolbar/search/search.component';
 import { VexProgressBarComponent } from '@vex/components/vex-progress-bar/vex-progress-bar.component';
 import { VexConfig } from '@vex/config/vex-config.interface';
 
@@ -39,7 +38,6 @@ import { VexConfig } from '@vex/config/vex-config.interface';
     MatSidenavModule,
     NgTemplateOutlet,
     RouterOutlet,
-    SearchComponent,
     VexProgressBarComponent
   ],
   standalone: true

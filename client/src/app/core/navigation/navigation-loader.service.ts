@@ -20,138 +20,138 @@ export class NavigationLoaderService {
 
   loadNavigation(): void {
     this._items.next([
-      {
-        type: 'subheading',
-        label: 'Dashboards',
-        children: [
-          {
-            type: 'link',
-            label: 'Analytics',
-            route: '/',
-            icon: 'mat:insights',
-            routerLinkActiveOptions: { exact: true }
-          }
-        ]
-      },
-      {
-        type: 'subheading',
-        label: 'Apps',
-        children: [
-          {
-            type: 'link',
-            label: 'All-In-One Table',
-            route: '/apps/aio-table',
-            icon: 'mat:assignment'
-          },
-          {
-            type: 'dropdown',
-            label: 'Help Center',
-            icon: 'mat:contact_support',
-            children: [
-              {
-                type: 'link',
-                label: 'Getting Started',
-                route: '/apps/help-center/getting-started'
-              },
-              {
-                type: 'link',
-                label: 'Pricing & Plans',
-                route: '/apps/help-center/pricing'
-              },
-              {
-                type: 'link',
-                label: 'FAQ',
-                route: '/apps/help-center/faq'
-              },
-              {
-                type: 'link',
-                label: 'Guides',
-                route: '/apps/help-center/guides'
-              }
-            ]
-          },
-          {
-            type: 'link',
-            label: 'Calendar',
-            route: '/apps/calendar',
-            icon: 'mat:date_range',
-            badge: {
-              value: '12',
-              bgClass: 'bg-purple-600',
-              textClass: 'text-white'
-            }
-          },
-          {
-            type: 'link',
-            label: 'Chat',
-            route: '/apps/chat',
-            icon: 'mat:chat',
-            badge: {
-              value: '16',
-              bgClass: 'bg-cyan-600',
-              textClass: 'text-white'
-            }
-          },
-          {
-            type: 'link',
-            label: 'Mailbox',
-            route: '/apps/mail',
-            icon: 'mat:mail'
-          },
-          {
-            type: 'dropdown',
-            label: 'Social',
-            icon: 'mat:person_outline',
-            children: [
-              {
-                type: 'link',
-                label: 'Profile',
-                route: '/apps/social',
-                routerLinkActiveOptions: { exact: true }
-              },
-              {
-                type: 'link',
-                label: 'Timeline',
-                route: '/apps/social/timeline'
-              }
-            ]
-          },
-          {
-            type: 'link',
-            label: 'WYSIWYG Editor',
-            route: '/apps/editor',
-            icon: 'mat:chrome_reader_mode'
-          },
-          {
-            type: 'dropdown',
-            label: 'Contacts',
-            icon: 'mat:contacts',
-            children: [
-              {
-                type: 'link',
-                label: 'List - Grid',
-                route: '/apps/contacts/grid'
-              },
-              {
-                type: 'link',
-                label: 'List - Table',
-                route: '/apps/contacts/table'
-              }
-            ]
-          },
-          {
-            type: 'link',
-            label: 'Scrumboard',
-            route: '/apps/scrumboard',
-            icon: 'mat:assessment',
-            badge: {
-              value: 'NEW',
-              bgClass: 'bg-primary-600',
-              textClass: 'text-on-primary-600'
-            }
-          }
-        ]
-      },
+      // {
+      //   type: 'subheading',
+      //   label: 'Dashboards',
+      //   children: [
+      //     {
+      //       type: 'link',
+      //       label: 'Analytics',
+      //       route: '/',
+      //       icon: 'mat:insights',
+      //       routerLinkActiveOptions: { exact: true }
+      //     }
+      //   ]
+      // },
+      // {
+      //   type: 'subheading',
+      //   label: 'Apps',
+      //   children: [
+      //     {
+      //       type: 'link',
+      //       label: 'All-In-One Table',
+      //       route: '/apps/aio-table',
+      //       icon: 'mat:assignment'
+      //     },
+      //     {
+      //       type: 'dropdown',
+      //       label: 'Help Center',
+      //       icon: 'mat:contact_support',
+      //       children: [
+      //         {
+      //           type: 'link',
+      //           label: 'Getting Started',
+      //           route: '/apps/help-center/getting-started'
+      //         },
+      //         {
+      //           type: 'link',
+      //           label: 'Pricing & Plans',
+      //           route: '/apps/help-center/pricing'
+      //         },
+      //         {
+      //           type: 'link',
+      //           label: 'FAQ',
+      //           route: '/apps/help-center/faq'
+      //         },
+      //         {
+      //           type: 'link',
+      //           label: 'Guides',
+      //           route: '/apps/help-center/guides'
+      //         }
+      //       ]
+      //     },
+      //     {
+      //       type: 'link',
+      //       label: 'Calendar',
+      //       route: '/apps/calendar',
+      //       icon: 'mat:date_range',
+      //       badge: {
+      //         value: '12',
+      //         bgClass: 'bg-purple-600',
+      //         textClass: 'text-white'
+      //       }
+      //     },
+      //     {
+      //       type: 'link',
+      //       label: 'Chat',
+      //       route: '/apps/chat',
+      //       icon: 'mat:chat',
+      //       badge: {
+      //         value: '16',
+      //         bgClass: 'bg-cyan-600',
+      //         textClass: 'text-white'
+      //       }
+      //     },
+      //     {
+      //       type: 'link',
+      //       label: 'Mailbox',
+      //       route: '/apps/mail',
+      //       icon: 'mat:mail'
+      //     },
+      //     {
+      //       type: 'dropdown',
+      //       label: 'Social',
+      //       icon: 'mat:person_outline',
+      //       children: [
+      //         {
+      //           type: 'link',
+      //           label: 'Profile',
+      //           route: '/apps/social',
+      //           routerLinkActiveOptions: { exact: true }
+      //         },
+      //         {
+      //           type: 'link',
+      //           label: 'Timeline',
+      //           route: '/apps/social/timeline'
+      //         }
+      //       ]
+      //     },
+      //     {
+      //       type: 'link',
+      //       label: 'WYSIWYG Editor',
+      //       route: '/apps/editor',
+      //       icon: 'mat:chrome_reader_mode'
+      //     },
+      //     {
+      //       type: 'dropdown',
+      //       label: 'Contacts',
+      //       icon: 'mat:contacts',
+      //       children: [
+      //         {
+      //           type: 'link',
+      //           label: 'List - Grid',
+      //           route: '/apps/contacts/grid'
+      //         },
+      //         {
+      //           type: 'link',
+      //           label: 'List - Table',
+      //           route: '/apps/contacts/table'
+      //         }
+      //       ]
+      //     },
+      //     {
+      //       type: 'link',
+      //       label: 'Scrumboard',
+      //       route: '/apps/scrumboard',
+      //       icon: 'mat:assessment',
+      //       badge: {
+      //         value: 'NEW',
+      //         bgClass: 'bg-primary-600',
+      //         textClass: 'text-on-primary-600'
+      //       }
+      //     }
+      //   ]
+      // },
       {
         type: 'subheading',
         label: 'Pages',

@@ -24,7 +24,6 @@ import { combineLatest, Observable } from 'rxjs';
 import { checkRouterChildsData } from '@vex/utils/check-router-childs-data';
 import { AsyncPipe, DOCUMENT, NgIf, NgTemplateOutlet } from '@angular/common';
 import { VexConfigService } from '@vex/config/vex-config.service';
-import { SearchComponent } from '../components/toolbar/search/search.component';
 import { VexProgressBarComponent } from '@vex/components/vex-progress-bar/vex-progress-bar.component';
 import { isNil } from '@vex/utils/is-nil';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -37,7 +36,6 @@ import { VexConfig } from '@vex/config/vex-config.interface';
   standalone: true,
   imports: [
     VexProgressBarComponent,
-    SearchComponent,
     MatSidenavModule,
     NgTemplateOutlet,
     RouterOutlet,

@@ -72,6 +72,9 @@ export const vexConfigs: VexConfigs = {
         visible: true
       }
     },
+    navbar: {
+      position: 'in-toolbar'
+    },
     toolbar: {
       user: {
         visible: false
@@ -92,6 +95,9 @@ export const vexConfigs: VexConfigs = {
       search: {
         visible: false
       }
+    },
+    navbar: {
+      position: 'in-toolbar'
     },
     toolbar: {
       fixed: false

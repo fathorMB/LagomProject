@@ -21,74 +21,9 @@ export const appRoutes: VexRoutes = [
       {
         path: '',
         loadComponent: () =>
-          import(
-            './pages/dashboards/dashboard-analytics/dashboard-analytics.component'
-          ).then((m) => m.DashboardAnalyticsComponent)
-      },
-      {
-        path: 'apps',
-        children: [
-          {
-            path: 'chat',
-            loadChildren: () => import('./pages/apps/chat/chat.routes')
-          },
-          {
-            path: 'mail',
-            loadChildren: () => import('./pages/apps/mail/mail.routes'),
-            data: {
-              toolbarShadowEnabled: true,
-              scrollDisabled: true
-            }
-          },
-          {
-            path: 'social',
-            loadChildren: () => import('./pages/apps/social/social.routes')
-          },
-          {
-            path: 'contacts',
-            loadChildren: () => import('./pages/apps/contacts/contacts.routes')
-          },
-          {
-            path: 'calendar',
-            loadComponent: () =>
-              import('./pages/apps/calendar/calendar.component').then(
-                (m) => m.CalendarComponent
-              ),
-            data: {
-              toolbarShadowEnabled: true
-            }
-          },
-          {
-            path: 'aio-table',
-            loadComponent: () =>
-              import('./pages/apps/aio-table/aio-table.component').then(
-                (m) => m.AioTableComponent
-              ),
-            data: {
-              toolbarShadowEnabled: false
-            }
-          },
-          {
-            path: 'help-center',
-            loadChildren: () =>
-              import('./pages/apps/help-center/help-center.routes')
-          },
-          {
-            path: 'scrumboard',
-            loadChildren: () =>
-              import('./pages/apps/scrumboard/scrumboard.routes')
-          },
-          {
-            path: 'editor',
-            loadComponent: () =>
-              import('./pages/apps/editor/editor.component').then(
-                (m) => m.EditorComponent
-              ),
-            data: {
-              scrollDisabled: true
-            }
-          }
-        ]
+          import('./pages/ui/components/components-overview/components-overview.component').then(
+            (m) => m.ComponentsOverviewComponent
+          )
       },
       {
         path: 'pages',
