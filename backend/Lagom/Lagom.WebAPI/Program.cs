@@ -28,6 +28,7 @@ namespace Lagom.WebAPI
             else
                 HTTPPipelineStartup.AddServices(builder);
 
+            // PR test commit
             // Add SignalR services and the background hosted service
             builder.Services.AddSignalR();
             builder.Services.AddHostedService<SignalRProbeService>();
