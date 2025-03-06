@@ -8,5 +8,6 @@
         public string JWTIssuer { get; set; } = string.Empty;
         public int WebSocketProbeInterval { get; set; }
         public string WebSocketProbeAPIVersion { get; set; } = string.Empty;
+        public int DateTimeProviderHoursOffset { get; set; }
     }
 }
