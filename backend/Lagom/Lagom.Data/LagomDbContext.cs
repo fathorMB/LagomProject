@@ -1,4 +1,5 @@
-﻿using Lagom.Data.ModelCreation;
+﻿using Lagom.Common;
+using Lagom.Data.ModelCreation;
 using Lagom.Model;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,6 +31,24 @@ namespace SGBackend.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             SystemUsersModelCreator.OnModelCreating(modelBuilder);
+        }
+
+        public override int SaveChanges()
+        {
+            if (ScramMode.IsActivated)
+            {
+                throw new InvalidOperationException("SCRAM mode is active: Database writes are currently disabled.");
+            }
+            return base.SaveChanges();
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            if (ScramMode.IsActivated)
+            {
+                throw new InvalidOperationException("SCRAM mode is active: Database writes are currently disabled.");
+            }
+            return await base.SaveChangesAsync(cancellationToken);
         }
     }
 }

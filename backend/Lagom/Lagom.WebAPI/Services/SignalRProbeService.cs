@@ -8,6 +8,7 @@ using Lagom.WebAPI.Hubs;
 using Lagom.Common;
 using Microsoft.Extensions.Options;
 using Lagom.WebAPI.Contracts.HubMessages;
+using Newtonsoft.Json;
 
 namespace Lagom.WebAPI.Services
 {
@@ -39,13 +40,14 @@ namespace Lagom.WebAPI.Services
 
                 var probeMessage = new ProbeMessage()
                 {
+                    ScramActive = ScramMode.IsActivated,
                     APIVersion = _appSettings.WebSocketProbeAPIVersion,
                     ServerDateTime = DateTime.Now //TO change with LagomDateTimeProvider.Now call
                 };
 
                 // Send the message to all connected clients using the "ReceiveMessage" method
                 await _hubContext.Clients.All.SendAsync("ReceiveProbeSignal", probeMessage, cancellationToken: stoppingToken);
-                _logger.LogInformation("Sent scheduled probe message: {Message}", probeMessage);
+                _logger.LogInformation("Sent scheduled probe message: {Message}", JsonConvert.SerializeObject(probeMessage));
             }
 
             _logger.LogInformation("SignalRMessageService is stopping.");
