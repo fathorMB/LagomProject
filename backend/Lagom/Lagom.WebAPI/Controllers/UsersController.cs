@@ -5,15 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Lagom.WebAPI.Controllers
 {
-    [Route("api/users")] //    /api/Users
+    [Route("api/users")]
     [ApiController]
     public class UsersController : ControllerBase
     {
         private IUserService _userService;
-
-        private string _credentialsRequiredMessageCode = "login.credentials.required";
-        private string _credentialsInvalidMessageCode = "login.credentials.invalid";
-        private string _userCreationErrorMessageCode = "user.creation.error";
 
         public UsersController(IUserService userService)
         {
@@ -29,7 +25,6 @@ namespace Lagom.WebAPI.Controllers
             return Ok(await _userService.Authenticate(request));
         }
 
-        // POST api/<CustomerController>
         [HttpPost]
         [Authorize(1)]
         [ProducesResponseType<CreateUserResponse>(200)]
