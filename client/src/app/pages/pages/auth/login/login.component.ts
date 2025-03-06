@@ -52,14 +52,14 @@ export class LoginComponent {
   ) {}
 
   send() {
-    this.router.navigate(['/']);
-    this.snackbar.open(
-      "Lucky you! Looks like you didn't need a password or email address! For a real application we provide validators to prevent this. ;)",
-      'THANKS',
-      {
-        duration: 10000
-      }
-    );
+    if (!this.form.invalid) {
+      // Your authentication logic here...
+      // For example, after a successful login, set the token:
+      localStorage.setItem('authToken', 'your-token-here');
+
+      // Redirect to the returnUrl:
+      this.router.navigate(['/']);
+    }
   }
 
   toggleVisibility() {
