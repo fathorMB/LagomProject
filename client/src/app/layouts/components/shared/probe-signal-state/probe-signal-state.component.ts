@@ -11,16 +11,13 @@ import { ProbeService } from 'src/app/services/probe.service';
 })
 export class ProbeSignalStateComponent {
     
-  private _probeSignal: ProbeSignal | null = null;
-  
-  public get isProbeSignalActive(): boolean {
-    return this._probeSignal != null;
-  }
-  public get probeSignalState(): string {
-    return this._probeSignal ? this._probeSignal.apiVersion + " - " + this._probeSignal.serverDateTime : "No signal received";
-  }
+  readonly probeSignalStateErrorMessage: string;
+  probeSignalState: string;
 
-  constructor(private _probeService: ProbeService) {}
+  constructor(private _probeService: ProbeService) {
+    this.probeSignalStateErrorMessage = "No signal received";
+    this.probeSignalState = this.probeSignalStateErrorMessage;
+  }
 
   ngOnInit(): void {
     this._probeService.startConnection().subscribe(() => {
@@ -32,10 +29,10 @@ export class ProbeSignalStateComponent {
   }
 
   private recieveProbeSignal(probeSignal: ProbeSignal): void {
-    this._probeSignal = probeSignal;
+    this.probeSignalState = probeSignal.apiVersion + " - " + probeSignal.serverDateTime;
   }
 
   private handleProbeSignalError(error: string): void {
-    this._probeSignal = null;
+    this.probeSignalState = this.probeSignalStateErrorMessage;
   }
 }
