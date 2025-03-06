@@ -1,6 +1,7 @@
 ﻿using Lagom.BusinessServices;
 using Lagom.BusinessServices.EFCore;
 using Lagom.Common;
+using Lagom.Common.Providers;
 using Lagom.ModelMapping;
 using Microsoft.EntityFrameworkCore;
 using SGBackend.Data;
@@ -18,6 +19,7 @@ namespace Lagom.WebAPI.Startup
             });
             webApplicationBuilder.Services.Configure<AppSettings>(webApplicationBuilder.Configuration.GetSection("AppSettings"));
             webApplicationBuilder.Services.AddScoped<IUserService, UserService>();
+            webApplicationBuilder.Services.AddSingleton<ILagomDateTimeProvider, LagomDateTimeProvider>();
         }
 
         public static void Configure(WebApplication webApplication)
