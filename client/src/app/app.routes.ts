@@ -1,3 +1,4 @@
+import { AuthGuard } from './auth.guard';
 import { LayoutComponent } from './layouts/layout/layout.component';
 import { VexRoutes } from '@vex/interfaces/vex-route.interface';
 
@@ -11,6 +12,7 @@ export const appRoutes: VexRoutes = [
   },
   {
     path: '',
+    canActivate: [AuthGuard],  // Protect these routes
     component: LayoutComponent,
     children: [
       {
