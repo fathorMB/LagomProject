@@ -20,9 +20,18 @@ export class ProbeSignalStateComponent {
 
   ngOnInit(): void {
     this._probeService.startConnection().subscribe(() => {
-      this._probeService.receiveProbeSignal().subscribe((probeSignal) => {
-        this._probeSignal = probeSignal;
+      this._probeService.receiveProbeSignal().subscribe({
+        next: this.recieveProbeSignal,
+        error: this.handleProbeSignalError
       });
     });
+  }
+
+  private recieveProbeSignal(probeSignal: ProbeSignal): void {
+    this._probeSignal = probeSignal;
+  }
+
+  private handleProbeSignalError(error: string): void {
+    this._probeSignal = null;
   }
 }
