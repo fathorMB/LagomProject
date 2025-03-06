@@ -12,7 +12,7 @@ export class ProbeService {
 
   constructor() {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(environment.apiEndpoint + '/probeHub') // SignalR hub URL
+      .withUrl(environment.wsEndpoint + '/probeHub') // SignalR hub URL
       .build();
   }
 

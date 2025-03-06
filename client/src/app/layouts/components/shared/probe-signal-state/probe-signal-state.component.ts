@@ -12,8 +12,12 @@ import { ProbeService } from 'src/app/services/probe.service';
 export class ProbeSignalStateComponent {
     
   private _probeSignal: ProbeSignal | null = null;
-  public get probeSignal(): ProbeSignal | null {
-    return this._probeSignal;
+  
+  public get isProbeSignalActive(): boolean {
+    return this._probeSignal != null;
+  }
+  public get probeSignalState(): string {
+    return this._probeSignal ? this._probeSignal.apiVersion + " - " + this._probeSignal.serverDateTime : "No signal received";
   }
 
   constructor(private _probeService: ProbeService) {}
