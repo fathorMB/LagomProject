@@ -9,6 +9,7 @@ using Lagom.Common;
 using Microsoft.Extensions.Options;
 using Lagom.WebAPI.Contracts.HubMessages;
 using Newtonsoft.Json;
+using Lagom.Common.Providers;
 
 namespace Lagom.WebAPI.Services
 {
@@ -17,16 +18,18 @@ namespace Lagom.WebAPI.Services
         private readonly IHubContext<ProbeHub> _hubContext;
         private readonly ILogger<SignalRProbeService> _logger;
         private readonly AppSettings _appSettings;
+        private readonly ILagomDateTimeProvider _datetimeProvider;
 
         // Pre-defined time interval in minutes and the message to send
         private readonly int _intervalMinutes = 0; // Change as needed
 
-        public SignalRProbeService(IHubContext<ProbeHub> hubContext, ILogger<SignalRProbeService> logger, IOptions<AppSettings> appSettings)
+        public SignalRProbeService(IHubContext<ProbeHub> hubContext, ILogger<SignalRProbeService> logger, IOptions<AppSettings> appSettings, ILagomDateTimeProvider datetimeProvider)
         {
             _appSettings = appSettings.Value;
             _intervalMinutes = _appSettings.WebSocketProbeInterval;
             _hubContext = hubContext;
             _logger = logger;
+            _datetimeProvider = datetimeProvider;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -42,7 +45,7 @@ namespace Lagom.WebAPI.Services
                 {
                     ScramActive = ScramMode.IsActivated,
                     APIVersion = _appSettings.WebSocketProbeAPIVersion,
-                    ServerDateTime = DateTime.Now //TO change with LagomDateTimeProvider.Now call
+                    ServerDateTime = _datetimeProvider.Now
                 };
 
                 // Send the message to all connected clients using the "ReceiveMessage" method
