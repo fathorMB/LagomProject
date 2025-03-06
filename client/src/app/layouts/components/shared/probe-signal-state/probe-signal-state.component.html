@@ -1,0 +1,4 @@
+<div>
+    <span class="dot" [class.bg-green-600]="probeSignal" [class.bg-red-600]="!probeSignal"></span> 
+    {{ probeSignal?.apiVersion + " - " +  probeSignal?.serverDateTime }}
+</div>
