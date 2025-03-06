@@ -14,6 +14,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { NgIf } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { AuthService } from 'src/app/services/auth.service';
+import { BusinessServiceResponseStatus } from 'src/app/models/abstracts/api-response.model';
 
 @Component({
   selector: 'vex-login',
@@ -37,7 +39,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 })
 export class LoginComponent {
   form = this.fb.group({
-    email: ['', Validators.required],
+    username: ['', Validators.required],
     password: ['', Validators.required]
   });
 
@@ -48,14 +50,21 @@ export class LoginComponent {
     private router: Router,
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
-    private snackbar: MatSnackBar
+    private snackbar: MatSnackBar,
+    private authService: AuthService
   ) {}
 
   send() {
     if (!this.form.invalid) {
-      // Your authentication logic here...
-      // For example, after a successful login, set the token:
-      localStorage.setItem('authToken', 'your-token-here');
+      this.authService.authenticate({username: this.form.controls.username.value ?? '', password: this.form.controls.password.value ?? '', requestId: ''})
+          .subscribe(response => {
+            console.log(response);
+            if (response.businessServiceStatus == BusinessServiceResponseStatus.Completed) {
+              localStorage.setItem('authToken', response.token);
+            } else {
+              console.log('Authentication failed.');
+            }
+          });
 
       // Redirect to the returnUrl:
       this.router.navigate(['/']);

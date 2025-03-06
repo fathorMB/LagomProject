@@ -26,17 +26,7 @@ namespace Lagom.WebAPI.Controllers
             if (request == null)
                 return BadRequest();
 
-            if (string.IsNullOrEmpty(request.Username) || string.IsNullOrEmpty(request.Password))
-            {
-                return BadRequest("Username and password must be provided.");
-            }
-
-            var response = await _userService.Authenticate(request);
-
-            if (response == null)
-                return BadRequest("Invalid credentials");
-
-            return Ok(response);
+            return Ok(await _userService.Authenticate(request));
         }
 
         // POST api/<CustomerController>
