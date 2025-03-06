@@ -3,7 +3,7 @@ import { ProbeSignal } from 'src/app/model/probe-signal';
 import { ProbeService } from 'src/app/services/probe.service';
 
 @Component({
-  selector: 'vex-probe-signal-state',
+  selector: 'lagom-probe-signal-state',
   standalone: true,
   imports: [],
   templateUrl: './probe-signal-state.component.html',
