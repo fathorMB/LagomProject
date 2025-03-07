@@ -19,6 +19,7 @@ namespace Lagom.WebAPI.Startup
             });
             webApplicationBuilder.Services.Configure<AppSettings>(webApplicationBuilder.Configuration.GetSection("AppSettings"));
             webApplicationBuilder.Services.AddScoped<IUserService, UserService>();
+            webApplicationBuilder.Services.AddScoped<IContactService, ContactService>();
             webApplicationBuilder.Services.AddSingleton<ILagomDateTimeProvider, LagomDateTimeProvider>();
         }
 

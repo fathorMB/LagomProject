@@ -22,5 +22,13 @@
             BusinessServiceStatus = businessServiceStatus;
             BusinessServiceMessages = businessServiceMessages;
         }
+
+        protected APIResponse(BusinessServiceResponseStatus businessServiceStatus, string[] businessServiceMessages)
+        {
+            RequestId = string.Empty;
+            ResponseId = Guid.NewGuid().ToString();
+            BusinessServiceStatus = businessServiceStatus;
+            BusinessServiceMessages = businessServiceMessages;
+        }
     }
 }

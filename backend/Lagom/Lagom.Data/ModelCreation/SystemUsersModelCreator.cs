@@ -53,6 +53,12 @@ namespace Lagom.Data.ModelCreation
                     Id = 2,
                     Name = "example",
                     Description = "Can run example controller routes"
+                },
+                new Claim
+                {
+                    Id = 3,
+                    Name = "data-operator",
+                    Description = "Can run CRUD and service operations on data"
                 }
             );
 
@@ -65,6 +71,11 @@ namespace Lagom.Data.ModelCreation
                 new UsersClaims
                 {
                     ClaimId = 2,
+                    UserId = 2
+                },
+                new UsersClaims
+                {
+                    ClaimId = 3,
                     UserId = 2
                 }
             );
