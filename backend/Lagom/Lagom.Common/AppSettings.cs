@@ -9,5 +9,6 @@
         public int WebSocketProbeInterval { get; set; }
         public string WebSocketProbeAPIVersion { get; set; } = string.Empty;
         public int DateTimeProviderHoursOffset { get; set; }
+        public string AzureBlobContainerName { get; set; } = string.Empty;
     }
 }

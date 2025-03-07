@@ -20,6 +20,7 @@ namespace SGBackend.Data
         public DbSet<Claim> Claims { get; set; }
         public DbSet<UsersClaims> UsersClaims { get; set; }
         public DbSet<Contact> Contacts { get; set; }
+        public DbSet<UploadedFile> UploadedFiles { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
