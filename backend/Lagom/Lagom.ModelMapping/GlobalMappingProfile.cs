@@ -11,6 +11,7 @@ namespace Lagom.ModelMapping
             CreateMap<User, UserContract>();
             CreateMap<Claim, ClaimContract>();
             CreateMap<Contact, ContactContract>();
+            CreateMap<UploadedFile, FileContract>();
         }
     }
 }
