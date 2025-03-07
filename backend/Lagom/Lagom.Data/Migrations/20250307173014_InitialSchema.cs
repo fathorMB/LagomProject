@@ -7,7 +7,7 @@
 namespace Lagom.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class FirstSchema : Migration
+    public partial class InitialSchema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -24,6 +24,23 @@ namespace Lagom.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Claims", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Contacts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Nick = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Contacts", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -73,7 +90,8 @@ namespace Lagom.Data.Migrations
                 values: new object[,]
                 {
                     { 1, "Full control", "admin" },
-                    { 2, "Can run example controller routes", "example" }
+                    { 2, "Can run example controller routes", "example" },
+                    { 3, "Can run CRUD and service operations on data", "data-operator" }
                 });
 
             migrationBuilder.InsertData(
@@ -91,7 +109,8 @@ namespace Lagom.Data.Migrations
                 values: new object[,]
                 {
                     { 1, 1 },
-                    { 2, 2 }
+                    { 2, 2 },
+                    { 3, 2 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -103,6 +122,9 @@ namespace Lagom.Data.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Contacts");
+
             migrationBuilder.DropTable(
                 name: "UsersClaims");
 
