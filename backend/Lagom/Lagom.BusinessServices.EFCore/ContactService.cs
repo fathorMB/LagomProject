@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Lagom.BusinessServices.EFCore.DataValidation;
 using Lagom.BusinessServices.EFCore.DataValidation.Abstracts;
-using Lagom.BusinessServices.EFCore.Utility;
 using Lagom.Common;
 using Lagom.Model;
 using Lagom.WebAPI.Contracts.Abstractions;
