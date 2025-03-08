@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { ProbeSignal } from '../model/probe-signal';
+import { ProbeSignal } from '../models/probe-signal.model';
 
 @Injectable({
   providedIn: 'root'
