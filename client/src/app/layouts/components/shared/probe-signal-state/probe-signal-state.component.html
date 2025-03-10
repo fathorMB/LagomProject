@@ -1,7 +1,7 @@
 <div>
     <span 
         class="dot" 
-        [class.bg-green-600]="this.probeSignalState !== this.probeSignalStateErrorMessage" 
-        [class.bg-red-600]="this.probeSignalState === this.probeSignalStateErrorMessage" >
-    </span>{{ this.probeSignalState }}
+        [class.bg-green-600]="probeSignalState !== probeSignalStateErrorMessage" 
+        [class.bg-red-600]="probeSignalState === probeSignalStateErrorMessage" >
+    </span>{{ probeSignalState }}
 </div>
