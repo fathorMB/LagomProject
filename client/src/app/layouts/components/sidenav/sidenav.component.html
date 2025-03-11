@@ -11,10 +11,10 @@
         <img
           [src]="imageUrl$ | async"
           alt="Logo"
-          class="w-6 select-none flex-none" />
-        <h2 class="vex-sidenav-toolbar__headline flex-auto">
+          class="w-full select-none flex-none" />
+        <!-- <h2 class="vex-sidenav-toolbar__headline flex-auto">
           {{ title$ | async }}
-        </h2>
+        </h2> -->
         </div>
       <vex-sidenav-item
         *ngFor="let item of items$ | async; trackBy: trackByRoute"
