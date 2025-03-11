@@ -20,7 +20,7 @@ export class ProbeSignalStateComponent {
 
   constructor(private _probeService: ProbeService, private _datePipe: DatePipe) {
     this.probeSignalStateErrorMessage = "No signal received";
-    this.probeSignalState = this.probeSignalStateErrorMessage;
+    this.probeSignalState = null;
   }
 
   ngOnInit(): void {
