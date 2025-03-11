@@ -398,5 +398,6 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-/backend/Lagom/Lagom.WebAPI/log20250303.txt
-/backend/Lagom/Lagom.WebAPI/log20250305.txt
+backend/Lagom/Lagom.WebAPI/log*.txt
+*/_generated-themes.scss
+/client/src/@vex/styles/_generated-themes.scss
