@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { environment } from 'src/environments/environment';
-import { ProbeSignalStateComponent } from "../shared/probe-signal-state/probe-signal-state.component";
+import { ProbeSignalStateComponent } from 'src/app/components/probe-signal-state/probe-signal-state.component';
 
 @Component({
   selector: 'vex-footer',
