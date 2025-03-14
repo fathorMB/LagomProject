@@ -1,20 +1,21 @@
-import { Component, inject } from '@angular/core';
-import { Contact } from 'src/app/pages/apps/contacts/interfaces/contact.interface';
+import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit } from '@angular/core';
+import { Contact } from 'src/app/models/contact.model';
 import { ContactsService } from 'src/app/services/contacts.service';
 
 @Component({
   selector: 'lagom-contacts-list',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './contacts-list.component.html',
-  styleUrl: './contacts-list.component.scss'
+  styleUrls: [ './contacts-list.component.scss' ]
 })
-export class ContactsListComponent {
+export class ContactsListComponent implements OnInit {
   private readonly contactsService = inject(ContactsService);
   
   contacts: Contact[] = [];
 
-  constructor() {
+  ngOnInit(): void {
     this.fetchContacts();
   }
 
