@@ -10,7 +10,7 @@ namespace Lagom.BusinessServices
         Task<CreateFileResponse> UploadFile(IFormFile file, string correlationId);
         Task<FileContract> GetFileById(int id);
         Task<IEnumerable<FileContract>> GetFilesByCorrelationId(string correlationId);
-        Task<DeleteFileResponse> DeleteFile(int id);
-        Task<DeleteFilesByCorrelationResponse> DeleteFilesByCorrelationId(string correlationId);
+        Task<BusinessServiceResponse> DeleteFile(int id);
+        Task<BusinessServiceResponse> DeleteFilesByCorrelationId(string correlationId);
     }
 }

@@ -117,11 +117,11 @@ namespace Lagom.BusinessServices.EFCore
             return result;
         }
 
-        public async Task<DeleteFileResponse> DeleteFile(int id)
+        public async Task<BusinessServiceResponse> DeleteFile(int id)
         {
             var fileRecord = await _db.UploadedFiles.FindAsync(id);
             if (fileRecord == null)
-                return new DeleteFileResponse(id, BusinessServiceResponseStatus.Error, new string[] { "File not found." });
+                return new BusinessServiceResponse(BusinessServiceResponseStatus.Error, new string[] { "File not found." });
 
             try
             {
@@ -131,19 +131,19 @@ namespace Lagom.BusinessServices.EFCore
                 _db.UploadedFiles.Remove(fileRecord);
                 await _db.SaveChangesAsync();
 
-                return new DeleteFileResponse(id, BusinessServiceResponseStatus.Completed, new string[] { "File deleted successfully." });
+                return new BusinessServiceResponse(BusinessServiceResponseStatus.Completed, new string[] { "File deleted successfully." });
             }
             catch (Exception ex)
             {
-                return new DeleteFileResponse(id, BusinessServiceResponseStatus.Error, new string[] { "Error deleting file.", ex.Message });
+                return new BusinessServiceResponse(BusinessServiceResponseStatus.Error, new string[] { "Error deleting file.", ex.Message });
             }
         }
 
-        public async Task<DeleteFilesByCorrelationResponse> DeleteFilesByCorrelationId(string correlationId)
+        public async Task<BusinessServiceResponse> DeleteFilesByCorrelationId(string correlationId)
         {
             var fileRecords = await _db.UploadedFiles.Where(f => f.CorrelationId == correlationId).ToListAsync();
             if (!fileRecords.Any())
-                return new DeleteFilesByCorrelationResponse(correlationId, BusinessServiceResponseStatus.Error, new string[] { "No files found for the given correlation id." });
+                return new BusinessServiceResponse(BusinessServiceResponseStatus.Error, new string[] { "No files found for the given correlation id." });
 
             try
             {
@@ -155,11 +155,11 @@ namespace Lagom.BusinessServices.EFCore
                 }
                 await _db.SaveChangesAsync();
 
-                return new DeleteFilesByCorrelationResponse(correlationId, BusinessServiceResponseStatus.Completed, new string[] { "Files deleted successfully." });
+                return new BusinessServiceResponse(BusinessServiceResponseStatus.Completed, new string[] { "Files deleted successfully." });
             }
             catch (Exception ex)
             {
-                return new DeleteFilesByCorrelationResponse(correlationId, BusinessServiceResponseStatus.Error, new string[] { "Error deleting files.", ex.Message });
+                return new BusinessServiceResponse(BusinessServiceResponseStatus.Error, new string[] { "Error deleting files.", ex.Message });
             }
         }
     }

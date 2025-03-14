@@ -57,7 +57,7 @@ namespace Lagom.WebAPI.Controllers
 
         // DELETE: api/files/{id}
         [HttpDelete]
-        [ProducesResponseType(typeof(DeleteFileResponse), 200)]
+        [ProducesResponseType(typeof(BusinessServiceResponse), 200)]
         public async Task<IActionResult> Delete(int id)
         {
             var response = await _fileService.DeleteFile(id);
@@ -66,7 +66,7 @@ namespace Lagom.WebAPI.Controllers
 
         // DELETE: api/files/byCorrelation/{correlationId}
         [HttpDelete("byCorrelation")]
-        [ProducesResponseType(typeof(DeleteFilesByCorrelationResponse), 200)]
+        [ProducesResponseType(typeof(BusinessServiceResponse), 200)]
         public async Task<IActionResult> DeleteByCorrelation(string correlationId)
         {
             var response = await _fileService.DeleteFilesByCorrelationId(correlationId);
