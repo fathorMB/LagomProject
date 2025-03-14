@@ -8,6 +8,7 @@ namespace Lagom.BusinessServices
     {
         Task<AuthenticateResponse> Authenticate(AuthenticateRequest request);
         Task<CreateUserResponse> AddUser(CreateUserRequest request);
+        Task<BusinessServiceResponse> ChangePassword(ChangePasswordRequest request);
 
         Task<IEnumerable<UserContract>> GetAll();
         Task<UserContract> GetById(int id);

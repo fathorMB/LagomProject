@@ -29,6 +29,22 @@ namespace Lagom.BusinessServices.EFCore
             _mapper = mapper;
         }
 
+        public async Task<BusinessServiceResponse> ChangePassword(ChangePasswordRequest request)
+        {
+            var user = await _db.Users.FindAsync(request.UserId);
+
+            if (user == null)
+            {
+                return new BusinessServiceResponse(request, BusinessServiceResponseStatus.Error, new string[] { "User not found." });
+            }
+
+            user.AccessKeyHash = MD5Encoder.CreateMD5(request.NewPassword);
+            await _db.SaveChangesAsync();
+
+            return new BusinessServiceResponse(request, BusinessServiceResponseStatus.Completed, new string[] { "Password changed successfully." });
+        }
+
+
         public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest model)
         {
             string passwordHash = MD5Encoder.CreateMD5(model.Password);
