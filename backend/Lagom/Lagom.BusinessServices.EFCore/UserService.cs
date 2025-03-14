@@ -44,6 +44,20 @@ namespace Lagom.BusinessServices.EFCore
             return new BusinessServiceResponse(request, BusinessServiceResponseStatus.Completed, new string[] { "Password changed successfully." });
         }
 
+        public async Task<BusinessServiceResponse> DeleteUser(int userId)
+        {
+            var user = await _db.Users.FindAsync(userId);
+
+            if (user == null)
+            {
+                return new BusinessServiceResponse(BusinessServiceResponseStatus.Error, new string[] { "User not found." });
+            }
+
+            _db.Users.Remove(user);
+            await _db.SaveChangesAsync();
+
+            return new BusinessServiceResponse(BusinessServiceResponseStatus.Completed, new string[] { "User deleted successfully." });
+        }
 
         public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest model)
         {
