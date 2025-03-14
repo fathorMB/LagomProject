@@ -58,16 +58,13 @@ export class LoginComponent {
     if (!this.form.invalid) {
       this.authService.authenticate({username: this.form.controls.username.value ?? '', password: this.form.controls.password.value ?? '', requestId: ''})
           .subscribe(response => {
-            console.log(response);
             if (response.businessServiceStatus == BusinessServiceResponseStatus.Completed) {
               localStorage.setItem('authToken', response.token);
+              this.router.navigate(['/']);
             } else {
               console.log('Authentication failed.');
             }
           });
-
-      // Redirect to the returnUrl:
-      this.router.navigate(['/']);
     }
   }
 
