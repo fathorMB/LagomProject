@@ -1,4 +1,5 @@
 ﻿using Lagom.BusinessServices;
+using Lagom.WebAPI.Contracts.Abstractions;
 using Lagom.WebAPI.Contracts.Requests;
 using Lagom.WebAPI.Contracts.Responses;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +24,20 @@ namespace Lagom.WebAPI.Controllers
                 return BadRequest();
 
             return Ok(await _userService.Authenticate(request));
+        }
+
+        [HttpPost("change-password")]
+        [Authorize(1)]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+        {
+            var response = await _userService.ChangePassword(request);
+
+            if (response.BusinessServiceStatus == BusinessServiceResponseStatus.Error)
+            {
+                return BadRequest(response.BusinessServiceMessages);
+            }
+
+            return Ok(response.BusinessServiceMessages);
         }
 
         [HttpPost]
