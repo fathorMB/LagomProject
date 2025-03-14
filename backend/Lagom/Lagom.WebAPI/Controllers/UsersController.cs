@@ -40,6 +40,20 @@ namespace Lagom.WebAPI.Controllers
             return Ok(response.BusinessServiceMessages);
         }
 
+        [HttpDelete]
+        [Authorize(1)]
+        public async Task<IActionResult> DeleteUser(int userId)
+        {
+            var response = await _userService.DeleteUser(userId);
+
+            if (response.BusinessServiceStatus == BusinessServiceResponseStatus.Error)
+            {
+                return BadRequest(response.BusinessServiceMessages);
+            }
+
+            return Ok(response.BusinessServiceMessages);
+        }
+
         [HttpPost]
         [Authorize(1)]
         [ProducesResponseType<CreateUserResponse>(200)]
