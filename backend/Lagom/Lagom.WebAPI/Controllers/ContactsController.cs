@@ -54,7 +54,7 @@ namespace Lagom.WebAPI.Controllers
         }
 
         [HttpDelete]
-        [ProducesResponseType<DeleteContactResponse>(200)]
+        [ProducesResponseType<BusinessServiceResponse>(200)]
         public async Task<IActionResult> Update(int id)
         {
             if (id == default)

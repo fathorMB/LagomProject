@@ -13,7 +13,7 @@ namespace Lagom.BusinessServices
     {
         Task<CreateContactResponse> CreateContact(CreateContactRequest request);
         Task<UpdateContactResponse> UpdateContact(UpdateContactRequest request);
-        Task<DeleteContactResponse> DeleteContact(int id);
+        Task<BusinessServiceResponse> DeleteContact(int id);
 
         Task<IEnumerable<ContactContract>> GetAll();
         Task<ContactContract> GetById(int id);

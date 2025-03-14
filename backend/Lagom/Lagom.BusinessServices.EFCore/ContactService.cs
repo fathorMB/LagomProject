@@ -64,12 +64,12 @@ namespace Lagom.BusinessServices.EFCore
             }
         }
 
-        public async Task<DeleteContactResponse> DeleteContact(int id)
+        public async Task<BusinessServiceResponse> DeleteContact(int id)
         {
             var match = await _db.Contacts.FindAsync(id);
 
             if (match == null)
-                return new DeleteContactResponse(id, BusinessServiceResponseStatus.Error, new string[] { $"Il contatto con ID:'{id}' non è stato trovato." });
+                return new BusinessServiceResponse(BusinessServiceResponseStatus.Error, new string[] { $"Il contatto con ID:'{id}' non è stato trovato." });
 
             try
             {
@@ -77,11 +77,11 @@ namespace Lagom.BusinessServices.EFCore
 
                 await _db.SaveChangesAsync();
 
-                return new DeleteContactResponse(id, BusinessServiceResponseStatus.Completed, new string[] { "Contatto eliminato correttamente." });
+                return new BusinessServiceResponse(BusinessServiceResponseStatus.Completed, new string[] { "Contatto eliminato correttamente." });
             }
             catch (Exception ex)
             {
-                return new DeleteContactResponse(id, BusinessServiceResponseStatus.Error, new string[] { $"Errore durante l'eliminazione del contatto con ID:'{id}'", ex.Message });
+                return new BusinessServiceResponse(BusinessServiceResponseStatus.Error, new string[] { $"Errore durante l'eliminazione del contatto con ID:'{id}'", ex.Message });
             }
         }
 
