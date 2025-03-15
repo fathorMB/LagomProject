@@ -73,40 +73,15 @@ import { BusinessServiceResponse } from 'src/app/models/business-service-respons
 export class ContactsComponent implements OnInit, AfterViewInit {
   private readonly contactsService = inject(ContactsService);
 
-  layoutCtrl = new UntypedFormControl('boxed');
-
   contacts: Contact[] = [];
 
   @Input()
   columns: TableColumn<Contact>[] = [
-    {
-      label: 'Checkbox',
-      property: 'checkbox',
-      type: 'checkbox',
-      visible: true
-    },
     { label: 'Nick', property: 'nick', type: 'text', visible: true },
-    {
-      label: 'First Name',
-      property: 'firstName',
-      type: 'text',
-      visible: false
-    },
-    { label: 'Last Name', property: 'lastName', type: 'text', visible: false },
-    {
-      label: 'E-Mail',
-      property: 'email',
-      type: 'text',
-      visible: true,
-      cssClasses: ['text-secondary', 'font-medium']
-    },
-    {
-      label: 'Phone',
-      property: 'phoneNumber',
-      type: 'text',
-      visible: true,
-      cssClasses: ['text-secondary', 'font-medium']
-    },
+    { label: 'First Name', property: 'firstName', type: 'text', visible: true },
+    { label: 'Last Name', property: 'lastName', type: 'text', visible: true },
+    { label: 'E-Mail', property: 'email', type: 'text', visible: true, cssClasses: ['text-secondary', 'font-medium'] },
+    { label: 'Phone', property: 'phoneNumber', type: 'text', visible: true, cssClasses: ['text-secondary', 'font-medium'] },
     { label: 'Actions', property: 'actions', type: 'button', visible: true }
   ];
   pageSize = 10;
@@ -209,10 +184,6 @@ export class ContactsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  deleteContacts(contacts: Contact[]) {
-    contacts.forEach((contact) => this.deleteContact(contact));
-  }
-
   onFilterChange(value: string) {
     if (!this.dataSource) {
       return;
@@ -222,25 +193,25 @@ export class ContactsComponent implements OnInit, AfterViewInit {
     this.dataSource.filter = value;
   }
 
-  toggleColumnVisibility(column: TableColumn<Contact>, event: Event) {
-    event.stopPropagation();
-    event.stopImmediatePropagation();
-    column.visible = !column.visible;
-  }
+  // toggleColumnVisibility(column: TableColumn<Contact>, event: Event) {
+  //   event.stopPropagation();
+  //   event.stopImmediatePropagation();
+  //   column.visible = !column.visible;
+  // }
 
   /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.length;
-    return numSelected === numRows;
-  }
+  // isAllSelected() {
+  //   const numSelected = this.selection.selected.length;
+  //   const numRows = this.dataSource.data.length;
+  //   return numSelected === numRows;
+  // }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
-    this.isAllSelected()
-      ? this.selection.clear()
-      : this.dataSource.data.forEach((row) => this.selection.select(row));
-  }
+  // masterToggle() {
+  //   this.isAllSelected()
+  //     ? this.selection.clear()
+  //     : this.dataSource.data.forEach((row) => this.selection.select(row));
+  // }
 
   trackByProperty<T>(index: number, column: TableColumn<T>) {
     return column.property;

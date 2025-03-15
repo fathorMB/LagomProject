@@ -34,6 +34,6 @@ export class ContactsService {
   }
 
   deleteContact(id: number): Observable<BusinessServiceResponse> {
-    return this.networkService.delete<BusinessServiceResponse>(this.route + '/' + id);
+    return this.networkService.delete<BusinessServiceResponse>(this.route + '?id=' + id);
   }
 }
