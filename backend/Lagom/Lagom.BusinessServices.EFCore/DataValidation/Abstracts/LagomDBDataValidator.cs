@@ -10,7 +10,7 @@ namespace Lagom.BusinessServices.EFCore.DataValidation.Abstracts
 {
     internal abstract class LagomDBDataValidator<T> where T : LagomDBEntity
     {
-        internal abstract Task<LagomDBDataValidatorResult> Validate(T entity, LagomDbContext dbContext);
+        internal abstract Task<LagomDBDataValidatorResult> Validate(DataValidationContext validationContext, T entity, LagomDbContext dbContext);
     }
 
     internal class LagomDBDataValidatorResult

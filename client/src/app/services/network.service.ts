@@ -66,7 +66,7 @@ export class NetworkService {
     }
     else {
       let authHeaders = { 'Authorization': 'Basic ' + this.authService.getToken() };    
-      return this.http.post<T>(url, body, { headers: this.createHeaders(authHeaders) })
+      return this.http.put<T>(url, body, { headers: this.createHeaders(authHeaders) })
         .pipe(catchError(this.handleError));
     }
   }
