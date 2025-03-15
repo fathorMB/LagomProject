@@ -1,12 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  DestroyRef,
-  inject,
-  Input,
-  OnInit,
-  ViewChild
-} from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, inject, Input, OnInit, ViewChild } from '@angular/core';
 import { filter } from 'rxjs/operators';
 import { ContactCreateUpdateComponent } from './contact-create-update/contact-create-update.component';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -17,11 +9,7 @@ import { TableColumn } from '@vex/interfaces/table-column.interface';
 import { SelectionModel } from '@angular/cdk/collections';
 import { fadeInUp400ms } from '@vex/animations/fade-in-up.animation';
 import { stagger40ms } from '@vex/animations/stagger.animation';
-import {
-  FormsModule,
-  ReactiveFormsModule,
-  UntypedFormControl
-} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, UntypedFormControl } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
@@ -40,6 +28,7 @@ import { ContactsService } from 'src/app/services/contacts.service';
 import { CreateContactResponse } from 'src/app/models/create-contact-response.model';
 import { UpdateContactResponse } from 'src/app/models/update-contact-response.model';
 import { BusinessServiceResponse } from 'src/app/models/business-service-response.model';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'lagom-contacts',
@@ -71,7 +60,9 @@ import { BusinessServiceResponse } from 'src/app/models/business-service-respons
   ]
 })
 export class ContactsComponent implements OnInit, AfterViewInit {
-  private readonly contactsService = inject(ContactsService);
+  private readonly _destroyRef: DestroyRef = inject(DestroyRef);
+  private readonly _contactsService: ContactsService = inject(ContactsService);
+  private readonly _breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
 
   contacts: Contact[] = [];
 
@@ -91,9 +82,7 @@ export class ContactsComponent implements OnInit, AfterViewInit {
   searchCtrl = new UntypedFormControl();
 
   @ViewChild(MatPaginator, { static: true }) paginator?: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort?: MatSort;
-
-  private readonly destroyRef: DestroyRef = inject(DestroyRef);
+  @ViewChild(MatSort, { static: true }) sort?: MatSort;  
 
   constructor(private dialog: MatDialog) {}
 
@@ -103,37 +92,60 @@ export class ContactsComponent implements OnInit, AfterViewInit {
       .map((column) => column.property);
   }
 
-  getData() {
-    return this.contactsService.getContacts();
+  ngOnInit() {
+    this.dataSource = new MatTableDataSource();
+    
+    this.initObservableBreakpointStates();
+    this.initObservableContacts();    
+    this.initSerchCtrl();
   }
 
-  ngOnInit() {
-    this.getData().subscribe((contacts) => {
+  private initObservableContacts(): void {
+    var observableContacts = this._contactsService.getContacts();
+
+    observableContacts.subscribe((contacts) => {
       this.contacts = contacts;
     });
 
-    this.dataSource = new MatTableDataSource();
-
-    this.getData()
+    observableContacts
       .pipe(filter<Contact[]>(Boolean))
       .subscribe((contacts) => {
         this.contacts = contacts;
         this.dataSource.data = contacts;
       });
+  }
+  private initObservableBreakpointStates(): void {
+    // Show all columns on extra large, large, medium screens
+    this._breakpointObserver
+      .observe([Breakpoints.XLarge, Breakpoints.Large, Breakpoints.Medium])
+      .subscribe((result) => {
+        if (result.matches) {
+          this.columns.forEach((column) => { column.visible = true; });
+        }
+      });
 
+    // Hide columns on small and extra small screens  
+    this._breakpointObserver
+      .observe([Breakpoints.Small, Breakpoints.XSmall])
+      .subscribe((result) => {
+        if (result.matches) {
+          this.columns.forEach((column) => { 
+            if (!['nick', 'actions'].includes(column.property)) { 
+              column.visible = false; 
+            } 
+          });
+        }
+      });
+  }
+  private initSerchCtrl(): void {
     this.searchCtrl.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe((value) => this.onFilterChange(value));
   }
 
   ngAfterViewInit() {
-    if (this.paginator) {
-      this.dataSource.paginator = this.paginator;
-    }
-
-    if (this.sort) {
-      this.dataSource.sort = this.sort;
-    }
+    if (this.paginator) { this.dataSource.paginator = this.paginator; }
+    if (this.sort) { this.dataSource.sort = this.sort; }
   }
 
   createContact() {
@@ -143,12 +155,11 @@ export class ContactsComponent implements OnInit, AfterViewInit {
       .subscribe((contact: Contact) => {
         // Contact is the new created contact (if the user pressed Save - otherwise it's null)
         if (contact) {
-          this.contactsService
+          this._contactsService
             .addContact(contact)
             .subscribe((createContactResponse: CreateContactResponse) => {
               this.contacts.push(createContactResponse.contact);
-              this.dataSource.data = this.contacts;
-              console.log('Contact added...' + createContactResponse.contact);
+              this.dataSource.data = this.contacts;              
             });
         }
       });
@@ -161,59 +172,31 @@ export class ContactsComponent implements OnInit, AfterViewInit {
       .subscribe((updatedContact: Contact) => {
         // Contact is the updated contact (if the user pressed Save - otherwise it's null)
         if (updatedContact) {
-          this.contactsService
+          this._contactsService
             .updateContact(updatedContact)
             .subscribe((updateContactResponse: UpdateContactResponse) => {
-              const index = this.contacts.findIndex(
-                (existingContact) =>
-                  existingContact.id === updateContactResponse.contact.id
-              );
+              const index = this.contacts.findIndex((existingContact) => existingContact.id === updateContactResponse.contact.id);
               this.contacts[index] = updateContactResponse.contact;
               this.dataSource.data = this.contacts;
-              console.log('Contact updated...' + updateContactResponse.contact);
             });
         }
       });
   }
 
   deleteContact(contact: Contact) {
-    this.contactsService.deleteContact(contact.id).subscribe((businessServiceResponse: BusinessServiceResponse) => {
+    this._contactsService.deleteContact(contact.id).subscribe((businessServiceResponse: BusinessServiceResponse) => {
       this.contacts = this.contacts.filter((c) => c.id !== contact.id);
       this.dataSource.data = this.contacts;
-      console.log('Contact deleted...' + contact);
     });
   }
 
   onFilterChange(value: string) {
-    if (!this.dataSource) {
-      return;
-    }
+    if (!this.dataSource) { return; }
+
     value = value.trim();
     value = value.toLowerCase();
     this.dataSource.filter = value;
   }
 
-  // toggleColumnVisibility(column: TableColumn<Contact>, event: Event) {
-  //   event.stopPropagation();
-  //   event.stopImmediatePropagation();
-  //   column.visible = !column.visible;
-  // }
-
-  /** Whether the number of selected elements matches the total number of rows. */
-  // isAllSelected() {
-  //   const numSelected = this.selection.selected.length;
-  //   const numRows = this.dataSource.data.length;
-  //   return numSelected === numRows;
-  // }
-
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
-  // masterToggle() {
-  //   this.isAllSelected()
-  //     ? this.selection.clear()
-  //     : this.dataSource.data.forEach((row) => this.selection.select(row));
-  // }
-
-  trackByProperty<T>(index: number, column: TableColumn<T>) {
-    return column.property;
-  }
+  trackByProperty<T>(index: number, column: TableColumn<T>) { return column.property; }
 }
