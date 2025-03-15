@@ -4,5 +4,5 @@
         [class.bg-yellow-600]="probeSignalState === null"
         [class.bg-green-600]="probeSignalState !== probeSignalStateErrorMessage" 
         [class.bg-red-600]="probeSignalState === probeSignalStateErrorMessage" >
-    </span>{{ probeSignalState ? probeSignalState : 'Waiting connection...' }}
+    </span>{{ probeSignalState ? probeSignalState : probeSignalStateConnectingMessage }}
 </div>

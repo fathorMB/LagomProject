@@ -268,9 +268,8 @@ export class AioTableComponent implements OnInit, AfterViewInit {
   }
 
   onFilterChange(value: string) {
-    if (!this.dataSource) {
-      return;
-    }
+    if (!this.dataSource) { return; }
+    
     value = value.trim();
     value = value.toLowerCase();
     this.dataSource.filter = value;
@@ -291,18 +290,11 @@ export class AioTableComponent implements OnInit, AfterViewInit {
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    this.isAllSelected()
-      ? this.selection.clear()
-      : this.dataSource.data.forEach((row) => this.selection.select(row));
+    this.isAllSelected() ? this.selection.clear()
+                         : this.dataSource.data.forEach((row) => this.selection.select(row));
   }
 
   trackByProperty<T>(index: number, column: TableColumn<T>) {
     return column.property;
-  }
-
-  onLabelChange(change: MatSelectChange, row: Customer) {
-    const index = this.customers.findIndex((c) => c === row);
-    this.customers[index].labels = change.value;
-    this.subject$.next(this.customers);
   }
 }

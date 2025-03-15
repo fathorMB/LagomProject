@@ -12,9 +12,6 @@
           [src]="imageUrl$ | async"
           alt="Logo"
           class="w-full select-none flex-none" />
-        <!-- <h2 class="vex-sidenav-toolbar__headline flex-auto">
-          {{ title$ | async }}
-        </h2> -->
         </div>
       <vex-sidenav-item
         *ngFor="let item of items$ | async; trackBy: trackByRoute"
@@ -38,13 +35,13 @@
       class="vex-sidenav-user flex items-center"
       matRipple
       matRippleColor="var(--vex-sidenav-item-ripple-color)">
-      <img
-        alt="User Avatar"
-        class="vex-sidenav-user__image flex-none"
-        src="../../../../assets/img/avatars/1.jpg" />
       <div class="vex-sidenav-user__content flex-auto">
-        <div class="vex-sidenav-user__title">David Smith</div>
-        <div class="vex-sidenav-user__subtitle">Product Manager</div>
+        <div class="vex-sidenav-user__title">{{ user.firstName}} {{ user.lastName}}</div>
+        <div class="vex-sidenav-user__subtitle">
+          @for (claim of user.claims; track claim.id) {
+            {{ claim.name }} 
+          }
+        </div>
       </div>
       <mat-icon
         class="vex-sidenav-user__dropdown-icon flex-none"

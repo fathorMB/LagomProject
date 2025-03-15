@@ -152,6 +152,25 @@ export class NavigationLoaderService {
       //     }
       //   ]
       // },
+
+      {
+        type: 'subheading',
+        label: 'Lagom',
+        children: [
+          {
+            type: 'dropdown',
+            label: 'Administration',
+            icon: 'mat:lock',
+            children: [
+              {
+                type: 'link',
+                label: 'Contacts',
+                route: '/login'
+              }
+            ]
+          }          
+        ]
+      },
       {
         type: 'subheading',
         label: 'Pages',

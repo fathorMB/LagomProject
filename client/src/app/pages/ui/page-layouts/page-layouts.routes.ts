@@ -4,7 +4,7 @@ const routes: Routes = [
   {
     path: 'blank',
     loadComponent: () =>
-      import('./blank/blank.component').then((m) => m.BlankComponent)
+      import('../../lagom/admin/contacts/contacts.component').then((m) => m.ContactsComponent)
   },
   {
     path: 'simple',

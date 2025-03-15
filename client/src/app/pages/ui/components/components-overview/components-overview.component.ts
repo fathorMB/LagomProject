@@ -28,7 +28,6 @@ import { VexPageLayoutComponent } from '@vex/components/vex-page-layout/vex-page
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { VexHighlightModule } from '@vex/components/vex-highlight/vex-highlight.module';
 import { NgForOf } from '@angular/common';
-import { ContactsListComponent } from "../../../../components/contacts-list/contacts-list.component";
 
 @Component({
   selector: 'vex-components-overview',
@@ -61,8 +60,7 @@ import { ContactsListComponent } from "../../../../components/contacts-list/cont
     ComponentsOverviewSlideToggleComponent,
     ComponentsOverviewSnackBarComponent,
     ComponentsOverviewTooltipComponent,
-    NgForOf,
-    ContactsListComponent
+    NgForOf
 ]
 })
 export class ComponentsOverviewComponent {

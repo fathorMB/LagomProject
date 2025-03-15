@@ -32,6 +32,10 @@ export class ProbeService {
     });
   }
 
+  closeConnection(): void {
+    this.hubConnection.stop();
+  }
+
   receiveProbeSignal(): Observable<ProbeSignal> {
     return new Observable<ProbeSignal>((observer) => {
       this.hubConnection.on('ReceiveProbeSignal', (probeSignal: ProbeSignal) => {
