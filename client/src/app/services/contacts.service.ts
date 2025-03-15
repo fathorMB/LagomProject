@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { NetworkService } from './network.service';
-import { Contact } from '../pages/apps/contacts/interfaces/contact.interface';
 import { Observable } from 'rxjs';
+import { Contact } from '../models/contact.model';
 
 @Injectable({
   providedIn: 'root'

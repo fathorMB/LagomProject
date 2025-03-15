@@ -1,0 +1,59 @@
+<form (ngSubmit)="save()" [formGroup]="form">
+    <div class="flex items-center" mat-dialog-title>
+        <h2 *ngIf="form.controls.firstName.value || form.controls.lastName.value" class="headline m-0 flex-auto">
+            {{ form.controls.firstName.value + " " + form.controls.lastName.value }}
+        </h2>
+        <h2 *ngIf="!form.controls.firstName.value && !form.controls.lastName.value" class="headline m-0 flex-auto">
+            New Contact
+        </h2>        
+    </div>
+
+    <mat-divider class="text-border"></mat-divider>
+
+    <mat-dialog-content class="flex flex-col">
+        <div class="flex flex-col sm:flex-row">            
+            <mat-form-field class="flex-auto">
+                <mat-label>First Name</mat-label>
+                <input cdkFocusInitial formControlName="firstName" matInput />
+
+                <mat-icon matIconPrefix svgIcon="mat:person"></mat-icon>
+            </mat-form-field>
+
+            <mat-form-field class="sm:ml-6 flex-auto">
+                <mat-label>Last Name</mat-label>
+                <input formControlName="lastName" matInput />
+
+                <mat-icon matIconPrefix svgIcon="mat:person"></mat-icon>
+            </mat-form-field>       
+        </div>
+
+        <mat-form-field class="sm:ml-6 flex-auto">
+            <mat-label>Nick</mat-label>
+            <input formControlName="nick" matInput />
+
+            <mat-icon matIconPrefix svgIcon="mat:person"></mat-icon>
+        </mat-form-field>        
+
+        <div class="flex flex-col sm:flex-row">
+            <mat-form-field class="flex-auto">
+                <mat-label>E-Mail</mat-label>
+                <input formControlName="email" matInput />
+
+                <mat-icon matIconPrefix svgIcon="mat:mail"></mat-icon>
+            </mat-form-field>
+
+            <mat-form-field class="flex-auto">
+                <mat-label>Phone Number</mat-label>
+                <input formControlName="phoneNumber" matInput />
+    
+                <mat-icon matIconPrefix svgIcon="mat:phone"></mat-icon>
+            </mat-form-field>
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close type="button">Cancel</button>
+        <button *ngIf="isCreateMode()" color="primary" mat-flat-button type="submit">Create Contact</button>
+        <button *ngIf="isUpdateMode()" color="primary" mat-flat-button type="submit">Update Contact</button>
+    </mat-dialog-actions>
+</form>

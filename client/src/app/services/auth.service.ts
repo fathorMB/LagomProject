@@ -27,6 +27,11 @@ export class AuthService {
       .pipe(catchError(this.handleError));
   }
 
+  logout() {    
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+  }
+
   private handleError(error: any) {
     // Log the error or display a notification
     console.error('Auth error:', error);

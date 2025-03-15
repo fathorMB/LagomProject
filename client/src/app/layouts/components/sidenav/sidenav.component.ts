@@ -15,6 +15,7 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { User } from 'src/app/models/user.model';
 
 @Component({
   selector: 'vex-sidenav',
@@ -55,6 +56,8 @@ export class SidenavComponent implements OnInit {
 
   items$: Observable<NavigationItem[]> = this.navigationService.items$;
 
+  user: User = {} as User;
+
   constructor(
     private navigationService: NavigationService,
     private layoutService: VexLayoutService,
@@ -63,7 +66,9 @@ export class SidenavComponent implements OnInit {
     private readonly dialog: MatDialog
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.user = JSON.parse(localStorage.getItem('user') || '{}');
+  }
 
   collapseOpenSidenav() {
     this.layoutService.collapseOpenSidenav();

@@ -60,6 +60,7 @@ export class LoginComponent {
           .subscribe(response => {
             if (response.businessServiceStatus == BusinessServiceResponseStatus.Completed) {
               localStorage.setItem('authToken', response.token);
+              localStorage.setItem('user', JSON.stringify(response.user));
               this.router.navigate(['/']);
             } else {
               console.log('Authentication failed.');
