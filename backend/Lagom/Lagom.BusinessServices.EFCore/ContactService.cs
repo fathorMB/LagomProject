@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Lagom.BusinessServices.EFCore.DataValidation;
 using Lagom.BusinessServices.EFCore.DataValidation.Abstracts;
+using Lagom.BusinessServices.EFCore.DataValidation.Validators;
 using Lagom.Common;
 using Lagom.Model;
 using Lagom.WebAPI.Contracts.Abstractions;
@@ -44,7 +45,7 @@ namespace Lagom.BusinessServices.EFCore
             };
 
             var contactValidator = new ContactValidator();
-            var contactValidationResult = await contactValidator.Validate(contactEntity, _db);
+            var contactValidationResult = await contactValidator.Validate(DataValidationContext.EntityCreation, contactEntity, _db);
 
             if (contactValidationResult.Status != LagomDBDataValidatorResultStatus.Success)
                 return new CreateContactResponse(request, new ContactContract(), BusinessServiceResponseStatus.Error, new string[] { contactValidationResult.ValidationMessage });
@@ -93,11 +94,12 @@ namespace Lagom.BusinessServices.EFCore
                 FirstName = request.Contact.FirstName,
                 LastName = request.Contact.LastName,
                 Nick = request.Contact.Nick,
-                PhoneNumber = request.Contact.PhoneNumber
+                PhoneNumber = request.Contact.PhoneNumber,
+                Id = request.Contact.Id
             };
 
             var contactValidator = new ContactValidator();
-            var contactValidationResult = await contactValidator.Validate(contactEntity, _db);
+            var contactValidationResult = await contactValidator.Validate(DataValidationContext.EntityUpdate, contactEntity, _db);
 
             if (contactValidationResult.Status != LagomDBDataValidatorResultStatus.Success)
                 return new UpdateContactResponse(request, new ContactContract(), BusinessServiceResponseStatus.Error, new string[] { contactValidationResult.ValidationMessage });
