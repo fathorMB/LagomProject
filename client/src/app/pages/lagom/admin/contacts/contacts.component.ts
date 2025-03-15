@@ -1,4 +1,12 @@
-import { AfterViewInit, Component, DestroyRef, inject, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  DestroyRef,
+  inject,
+  Input,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { filter } from 'rxjs/operators';
 import { ContactCreateUpdateComponent } from './contact-create-update/contact-create-update.component';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -9,7 +17,11 @@ import { TableColumn } from '@vex/interfaces/table-column.interface';
 import { SelectionModel } from '@angular/cdk/collections';
 import { fadeInUp400ms } from '@vex/animations/fade-in-up.animation';
 import { stagger40ms } from '@vex/animations/stagger.animation';
-import { FormsModule, ReactiveFormsModule, UntypedFormControl } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormControl
+} from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,6 +37,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatInputModule } from '@angular/material/input';
 import { Contact } from 'src/app/models/contact.model';
 import { ContactsService } from 'src/app/services/contacts.service';
+import { CreateContactResponse } from 'src/app/models/create-contact-response.model';
+import { UpdateContactResponse } from 'src/app/models/update-contact-response.model';
+import { BusinessServiceResponse } from 'src/app/models/business-service-response.model';
 
 @Component({
   selector: 'lagom-contacts',
@@ -57,19 +72,41 @@ import { ContactsService } from 'src/app/services/contacts.service';
 })
 export class ContactsComponent implements OnInit, AfterViewInit {
   private readonly contactsService = inject(ContactsService);
-  
+
   layoutCtrl = new UntypedFormControl('boxed');
 
   contacts: Contact[] = [];
 
   @Input()
   columns: TableColumn<Contact>[] = [
-    { label: 'Checkbox', property: 'checkbox', type: 'checkbox', visible: true },
+    {
+      label: 'Checkbox',
+      property: 'checkbox',
+      type: 'checkbox',
+      visible: true
+    },
     { label: 'Nick', property: 'nick', type: 'text', visible: true },
-    { label: 'First Name', property: 'firstName', type: 'text', visible: false },
-    { label: 'Last Name', property: 'lastName', type: 'text', visible: false },    
-    { label: 'E-Mail', property: 'email', type: 'text', visible: true, cssClasses: ['text-secondary', 'font-medium'] },
-    { label: 'Phone', property: 'phoneNumber', type: 'text', visible: true, cssClasses: ['text-secondary', 'font-medium'] },
+    {
+      label: 'First Name',
+      property: 'firstName',
+      type: 'text',
+      visible: false
+    },
+    { label: 'Last Name', property: 'lastName', type: 'text', visible: false },
+    {
+      label: 'E-Mail',
+      property: 'email',
+      type: 'text',
+      visible: true,
+      cssClasses: ['text-secondary', 'font-medium']
+    },
+    {
+      label: 'Phone',
+      property: 'phoneNumber',
+      type: 'text',
+      visible: true,
+      cssClasses: ['text-secondary', 'font-medium']
+    },
     { label: 'Actions', property: 'actions', type: 'button', visible: true }
   ];
   pageSize = 10;
@@ -91,7 +128,9 @@ export class ContactsComponent implements OnInit, AfterViewInit {
       .map((column) => column.property);
   }
 
-  getData() { return this.contactsService.getContacts(); }
+  getData() {
+    return this.contactsService.getContacts();
+  }
 
   ngOnInit() {
     this.getData().subscribe((contacts) => {
@@ -100,10 +139,12 @@ export class ContactsComponent implements OnInit, AfterViewInit {
 
     this.dataSource = new MatTableDataSource();
 
-    this.getData().pipe(filter<Contact[]>(Boolean)).subscribe((contacts) => {
-      this.contacts = contacts;
-      this.dataSource.data = contacts;
-    });
+    this.getData()
+      .pipe(filter<Contact[]>(Boolean))
+      .subscribe((contacts) => {
+        this.contacts = contacts;
+        this.dataSource.data = contacts;
+      });
 
     this.searchCtrl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -126,7 +167,15 @@ export class ContactsComponent implements OnInit, AfterViewInit {
       .afterClosed()
       .subscribe((contact: Contact) => {
         // Contact is the new created contact (if the user pressed Save - otherwise it's null)
-        if (contact) { this.contactsService.addContact(contact);}
+        if (contact) {
+          this.contactsService
+            .addContact(contact)
+            .subscribe((createContactResponse: CreateContactResponse) => {
+              this.contacts.push(createContactResponse.contact);
+              this.dataSource.data = this.contacts;
+              console.log('Contact added...' + createContactResponse.contact);
+            });
+        }
       });
   }
 
@@ -134,14 +183,30 @@ export class ContactsComponent implements OnInit, AfterViewInit {
     this.dialog
       .open(ContactCreateUpdateComponent, { data: contact })
       .afterClosed()
-      .subscribe((updatedContact) => {
+      .subscribe((updatedContact: Contact) => {
         // Contact is the updated contact (if the user pressed Save - otherwise it's null)
-        if (updatedContact) { this.contactsService.updateContact(updatedContact); }
+        if (updatedContact) {
+          this.contactsService
+            .updateContact(updatedContact)
+            .subscribe((updateContactResponse: UpdateContactResponse) => {
+              const index = this.contacts.findIndex(
+                (existingContact) =>
+                  existingContact.id === updateContactResponse.contact.id
+              );
+              this.contacts[index] = updateContactResponse.contact;
+              this.dataSource.data = this.contacts;
+              console.log('Contact updated...' + updateContactResponse.contact);
+            });
+        }
       });
   }
 
   deleteContact(contact: Contact) {
-    this.contactsService.deleteContact(contact.id);
+    this.contactsService.deleteContact(contact.id).subscribe((businessServiceResponse: BusinessServiceResponse) => {
+      this.contacts = this.contacts.filter((c) => c.id !== contact.id);
+      this.dataSource.data = this.contacts;
+      console.log('Contact deleted...' + contact);
+    });
   }
 
   deleteContacts(contacts: Contact[]) {
@@ -172,8 +237,9 @@ export class ContactsComponent implements OnInit, AfterViewInit {
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    this.isAllSelected() ? this.selection.clear()
-                         : this.dataSource.data.forEach((row) => this.selection.select(row));
+    this.isAllSelected()
+      ? this.selection.clear()
+      : this.dataSource.data.forEach((row) => this.selection.select(row));
   }
 
   trackByProperty<T>(index: number, column: TableColumn<T>) {

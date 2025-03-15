@@ -28,8 +28,6 @@ import { NgIf } from '@angular/common';
   ]
 })
 export class ContactCreateUpdateComponent implements OnInit {
-  
-  
   form = this.fb.group({
     id: this.defaults?.id,
     firstName: this.defaults?.firstName || '',
@@ -62,6 +60,7 @@ export class ContactCreateUpdateComponent implements OnInit {
 
   createContact() {
     const contact = this.form.value;
+    contact.id = 0;
     this.dialogRef.close(contact);
   }
 
