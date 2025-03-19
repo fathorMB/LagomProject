@@ -1,8 +1,8 @@
 // auth.service.ts
 import { Injectable } from '@angular/core';
-import { AuthenticateRequest } from '../models/authenticate-request.model';
+import { AuthenticateRequest } from '../models/users/authenticate-request.model';
 import { catchError, Observable, throwError } from 'rxjs';
-import { AuthenticateResponse } from '../models/authenticate-response.model';
+import { AuthenticateResponse } from '../models/users/authenticate-response.model';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 
