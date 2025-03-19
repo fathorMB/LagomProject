@@ -24,7 +24,11 @@ namespace Lagom.WebAPI
             }
             else
             {
-                if (!user.Claims.Any(c => c.Id == 1))
+                //if user is admin, allow access
+                if (user.Claims.Any(c => c.Id == 1)) { return; }
+
+                //specific route claim required
+                if (Claims.Count() != 0)
                 {
                     //user is not admin
                     if (!user.Claims.Any(c => Claims.Contains(c.Id)))
