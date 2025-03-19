@@ -34,7 +34,7 @@ export class NetworkService {
     const url = `${this.baseUrl}/${endpoint}`;
     if (!this.authService.isAuthenticated()) {      
       this.router.navigate(['/']);
-      return throwError('User is not authenticated'); // Stop further processing
+      return throwError(() => new Error('User is not authenticated')); // Stop further processing
     }
     else {
       let authHeaders = { 'Authorization': 'Basic ' + this.authService.getToken() };    
@@ -48,7 +48,7 @@ export class NetworkService {
     const url = `${this.baseUrl}/${endpoint}`;
     if (!this.authService.isAuthenticated()) {      
       this.router.navigate(['/']);
-      return throwError('User is not authenticated'); // Stop further processing
+      return throwError(() => new Error('User is not authenticated')); // Stop further processing
     }
     else {
       let authHeaders = { 'Authorization': 'Basic ' + this.authService.getToken() };    
@@ -62,7 +62,7 @@ export class NetworkService {
     const url = `${this.baseUrl}/${endpoint}`;
     if (!this.authService.isAuthenticated()) {      
       this.router.navigate(['/']);
-      return throwError('User is not authenticated'); // Stop further processing
+      return throwError(() => new Error('User is not authenticated')); // Stop further processing
     }
     else {
       let authHeaders = { 'Authorization': 'Basic ' + this.authService.getToken() };    
@@ -76,7 +76,7 @@ export class NetworkService {
     const url = `${this.baseUrl}/${endpoint}`;
     if (!this.authService.isAuthenticated()) {      
       this.router.navigate(['/']);
-      return throwError('User is not authenticated'); // Stop further processing
+      return throwError(() => new Error('User is not authenticated')); // Stop further processing
     }
     else {
       let authHeaders = { 'Authorization': 'Basic ' + this.authService.getToken() };    

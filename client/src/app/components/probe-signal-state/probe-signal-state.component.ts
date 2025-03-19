@@ -1,5 +1,5 @@
 import { Component, EventEmitter, inject, OnDestroy, OnInit, Output } from '@angular/core';
-import { ProbeSignal } from 'src/app/models/probe-signal.model';
+import { ProbeSignal } from 'src/app/models/common/probe-signal.model';
 import { ProbeService } from 'src/app/services/probe.service';
 import { DatePipe } from '@angular/common';
 

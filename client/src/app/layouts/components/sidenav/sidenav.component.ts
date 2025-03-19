@@ -15,7 +15,7 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
-import { User } from 'src/app/models/user.model';
+import { User } from 'src/app/models/users/user.model';
 
 @Component({
   selector: 'vex-sidenav',
