@@ -21,6 +21,7 @@ namespace Lagom.WebAPI.Startup
             webApplicationBuilder.Services.AddScoped<IUserService, UserService>();
             webApplicationBuilder.Services.AddScoped<IContactService, ContactService>();
             webApplicationBuilder.Services.AddScoped<IFileService, FileService>();
+            webApplicationBuilder.Services.AddScoped<IClientNavigationService, ClientNavigationService>();
             webApplicationBuilder.Services.AddSingleton<ILagomDateTimeProvider, LagomDateTimeProvider>();
         }
 

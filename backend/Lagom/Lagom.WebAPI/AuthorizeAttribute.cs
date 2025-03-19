@@ -24,7 +24,7 @@ namespace Lagom.WebAPI
             }
             else
             {
-                if (!user.Claims.Any(c => c.Id == 1))
+                if (!user.Claims.Any(c => c.Id == 1) || Claims.Count() != 0)
                 {
                     //user is not admin
                     if (!user.Claims.Any(c => Claims.Contains(c.Id)))
