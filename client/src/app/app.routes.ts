@@ -28,6 +28,15 @@ export const appRoutes: VexRoutes = [
           )
       },
       {
+        path: 'lagom',
+        children: [
+          {
+            path: 'admin',
+            loadChildren: () => import('./pages/lagom/admin/admin.routes')
+          }
+        ]
+      },
+      {
         path: 'pages',
         children: [
           {

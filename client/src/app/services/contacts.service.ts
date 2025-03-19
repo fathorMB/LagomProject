@@ -1,12 +1,13 @@
 import { inject, Injectable } from '@angular/core';
 import { NetworkService } from './network.service';
 import { Observable } from 'rxjs';
-import { Contact } from '../models/contact.model';
-import { CreateContactRequest } from '../models/create-contact-request.model';
-import { CreateContactResponse } from '../models/create-contact-response.model';
-import { BusinessServiceResponse } from '../models/business-service-response.model';
-import { UpdateContactRequest } from '../models/update-contact-request.model';
-import { UpdateContactResponse } from '../models/update-contact-response.model';
+import { UpdateContactRequest } from '../models/contacts/update-contact-request.model';
+import { UpdateContactResponse } from '../models/contacts/update-contact-response.model';
+import { Contact } from '../models/contacts/contact.model';
+import { CreateContactRequest } from '../models/contacts/create-contact-request.model';
+import { CreateContactResponse } from '../models/contacts/create-contact-response.model';
+import { BusinessServiceResponse } from '../models/common/business-service-response.model';
+import { QueryStringBuilder } from '../helpers/query-string-builder';
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +35,7 @@ export class ContactsService {
   }
 
   deleteContact(id: number): Observable<BusinessServiceResponse> {
-    return this.networkService.delete<BusinessServiceResponse>(this.route + '?id=' + id);
+    var queryString = QueryStringBuilder.build(new URLSearchParams({ id: id.toString() }));
+    return this.networkService.delete<BusinessServiceResponse>(this.route + queryString);
   }
 }

@@ -1,4 +1,4 @@
-import { APIRequest } from "./abstracts/api-request.model";
+import { APIRequest } from "../abstracts/api-request.model";
 
 export interface AuthenticateRequest extends APIRequest {
     username: string;

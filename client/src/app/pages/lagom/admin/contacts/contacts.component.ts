@@ -23,12 +23,12 @@ import { VexPageLayoutHeaderDirective } from '@vex/components/vex-page-layout/ve
 import { VexPageLayoutComponent } from '@vex/components/vex-page-layout/vex-page-layout.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatInputModule } from '@angular/material/input';
-import { Contact } from 'src/app/models/contact.model';
 import { ContactsService } from 'src/app/services/contacts.service';
-import { CreateContactResponse } from 'src/app/models/create-contact-response.model';
-import { UpdateContactResponse } from 'src/app/models/update-contact-response.model';
-import { BusinessServiceResponse } from 'src/app/models/business-service-response.model';
+import { UpdateContactResponse } from 'src/app/models/contacts/update-contact-response.model';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { Contact } from 'src/app/models/contacts/contact.model';
+import { CreateContactResponse } from 'src/app/models/contacts/create-contact-response.model';
+import { BusinessServiceResponse } from 'src/app/models/common/business-service-response.model';
 
 @Component({
   selector: 'lagom-contacts',

@@ -165,7 +165,12 @@ export class NavigationLoaderService {
               {
                 type: 'link',
                 label: 'Contacts',
-                route: '/login'
+                route: 'lagom/admin/contacts'
+              },
+              {
+                type: 'link',
+                label: 'Users',
+                route: 'lagom/admin/users'
               }
             ]
           }          
