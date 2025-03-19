@@ -1,6 +1,7 @@
 ﻿using Lagom.Common;
 using Lagom.Data.ModelCreation;
 using Lagom.Model;
+using Lagom.Model.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace SGBackend.Data
@@ -21,6 +22,10 @@ namespace SGBackend.Data
         public DbSet<UsersClaims> UsersClaims { get; set; }
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<UploadedFile> UploadedFiles { get; set; }
+        public DbSet<BasicProduct> BasicProducts { get; set; }
+        public DbSet<ComplexProduct> ComplexProducts { get; set; }
+        public DbSet<ComplexProductComponent> ComplexProductComponents { get; set; }
+        public DbSet<Equipment> Equipment { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -33,6 +38,7 @@ namespace SGBackend.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             SystemUsersModelCreator.OnModelCreating(modelBuilder);
+            DomainModelCreator.OnModelCreating(modelBuilder);
         }
 
         public override int SaveChanges()

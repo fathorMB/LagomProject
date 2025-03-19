@@ -96,6 +96,105 @@ namespace Lagom.Data.Migrations
                     b.ToTable("Contacts");
                 });
 
+            modelBuilder.Entity("Lagom.Model.Domain.BasicProduct", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BasicProducts");
+                });
+
+            modelBuilder.Entity("Lagom.Model.Domain.ComplexProduct", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ComplexProducts");
+                });
+
+            modelBuilder.Entity("Lagom.Model.Domain.ComplexProductComponent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BasicProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ComplexProductId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BasicProductId");
+
+                    b.HasIndex("ComplexProductId");
+
+                    b.ToTable("ComplexProductComponents");
+                });
+
+            modelBuilder.Entity("Lagom.Model.Domain.Equipment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Equipment");
+                });
+
             modelBuilder.Entity("Lagom.Model.UploadedFile", b =>
                 {
                     b.Property<int>("Id")
@@ -215,6 +314,25 @@ namespace Lagom.Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Lagom.Model.Domain.ComplexProductComponent", b =>
+                {
+                    b.HasOne("Lagom.Model.Domain.BasicProduct", "BasicProduct")
+                        .WithMany()
+                        .HasForeignKey("BasicProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Lagom.Model.Domain.ComplexProduct", "ComplexProduct")
+                        .WithMany("Components")
+                        .HasForeignKey("ComplexProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BasicProduct");
+
+                    b.Navigation("ComplexProduct");
+                });
+
             modelBuilder.Entity("Lagom.Model.UsersClaims", b =>
                 {
                     b.HasOne("Lagom.Model.Claim", "Claim")
@@ -237,6 +355,11 @@ namespace Lagom.Data.Migrations
             modelBuilder.Entity("Lagom.Model.Claim", b =>
                 {
                     b.Navigation("UsersClaims");
+                });
+
+            modelBuilder.Entity("Lagom.Model.Domain.ComplexProduct", b =>
+                {
+                    b.Navigation("Components");
                 });
 
             modelBuilder.Entity("Lagom.Model.User", b =>

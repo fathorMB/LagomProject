@@ -14,6 +14,22 @@ namespace Lagom.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "BasicProducts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BasicProducts", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Claims",
                 columns: table => new
                 {
@@ -25,6 +41,20 @@ namespace Lagom.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Claims", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ComplexProducts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComplexProducts", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -42,6 +72,21 @@ namespace Lagom.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Contacts", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Equipment",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Equipment", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -77,6 +122,33 @@ namespace Lagom.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ComplexProductComponents",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ComplexProductId = table.Column<int>(type: "int", nullable: false),
+                    BasicProductId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComplexProductComponents", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ComplexProductComponents_BasicProducts_BasicProductId",
+                        column: x => x.BasicProductId,
+                        principalTable: "BasicProducts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ComplexProductComponents_ComplexProducts_ComplexProductId",
+                        column: x => x.ComplexProductId,
+                        principalTable: "ComplexProducts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -133,6 +205,16 @@ namespace Lagom.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_ComplexProductComponents_BasicProductId",
+                table: "ComplexProductComponents",
+                column: "BasicProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComplexProductComponents_ComplexProductId",
+                table: "ComplexProductComponents",
+                column: "ComplexProductId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UsersClaims_ClaimId",
                 table: "UsersClaims",
                 column: "ClaimId");
@@ -142,13 +224,25 @@ namespace Lagom.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "ComplexProductComponents");
+
+            migrationBuilder.DropTable(
                 name: "Contacts");
+
+            migrationBuilder.DropTable(
+                name: "Equipment");
 
             migrationBuilder.DropTable(
                 name: "UploadedFiles");
 
             migrationBuilder.DropTable(
                 name: "UsersClaims");
+
+            migrationBuilder.DropTable(
+                name: "BasicProducts");
+
+            migrationBuilder.DropTable(
+                name: "ComplexProducts");
 
             migrationBuilder.DropTable(
                 name: "Claims");
