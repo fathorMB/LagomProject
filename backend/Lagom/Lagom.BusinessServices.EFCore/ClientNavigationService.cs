@@ -68,7 +68,7 @@ namespace Lagom.BusinessServices.EFCore
                         {
                             Label = "Utenti",
                             Icon = "mat:people",
-                            Route = "/ui/admin/users"
+                            Route = "lagom/admin/users"
                         }
                     }
                 }
