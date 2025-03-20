@@ -35,7 +35,7 @@ namespace Lagom.BusinessServices.EFCore
                         {
                             Label = "Blank",
                             Icon = "mat:picture_in_picture",
-                            Route = "/ui/page-layouts/blank"
+                            Route = "lagom/menu/contacts"
                         }
                     }
                 }
@@ -55,7 +55,7 @@ namespace Lagom.BusinessServices.EFCore
                         {
                             Label = "Contatti",
                             Icon = "mat:picture_in_picture",
-                            Route = "/ui/page-layouts/blank"
+                            Route = "lagom/menu/contacts"
                         }
                     }
                 },
