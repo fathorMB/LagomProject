@@ -81,7 +81,9 @@ namespace Lagom.BusinessServices.EFCore
         {
             List<UserContract> result = new List<UserContract>();
 
-            foreach (var userId in _db.Users.Select(u => u.Id))
+            var userIds = await _db.Users.Select(u => u.Id).ToListAsync();
+
+            foreach (var userId in userIds)
             {
                 result.Add(await GetByIdInternal(userId));
             }

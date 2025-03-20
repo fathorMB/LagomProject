@@ -1,4 +1,5 @@
 ﻿using Lagom.BusinessServices;
+using Lagom.BusinessServices.EFCore;
 using Lagom.WebAPI.Contracts.Abstractions;
 using Lagom.WebAPI.Contracts.Requests;
 using Lagom.WebAPI.Contracts.Responses;
@@ -38,6 +39,13 @@ namespace Lagom.WebAPI.Controllers
             }
 
             return Ok(response.BusinessServiceMessages);
+        }
+
+        [HttpGet("all")]
+        [Authorize(1)]
+        public async Task<IActionResult> GetAll()
+        {
+            return Ok(await _userService.GetAll());
         }
 
         [HttpDelete]
