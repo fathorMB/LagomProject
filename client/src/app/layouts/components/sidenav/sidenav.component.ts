@@ -68,6 +68,7 @@ export class SidenavComponent implements OnInit {
 
   ngOnInit() {
     this.user = JSON.parse(localStorage.getItem('user') || '{}');
+    this.navigationService.refreshItems();
   }
 
   collapseOpenSidenav() {
