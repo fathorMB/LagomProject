@@ -5,10 +5,7 @@ import { VexRoutes } from '@vex/interfaces/vex-route.interface';
 export const appRoutes: VexRoutes = [
   {
     path: 'login',
-    loadComponent: () =>
-      import('./pages/pages/auth/login/login.component').then(
-        (m) => m.LoginComponent
-      )
+    loadComponent: () => import('./pages/pages/auth/login/login.component').then((m) => m.LoginComponent)
   },
   {
     path: '',
@@ -33,6 +30,10 @@ export const appRoutes: VexRoutes = [
           {
             path: 'admin',
             loadChildren: () => import('./pages/lagom/admin/admin.routes')
+          },
+          {
+            path: 'menu',
+            loadChildren: () => import('./pages/lagom/menu/menu.routes')
           }
         ]
       },
