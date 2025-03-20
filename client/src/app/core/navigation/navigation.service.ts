@@ -21,6 +21,10 @@ export class NavigationService {
     private readonly navigationLoaderService: NavigationLoaderService
   ) {}
 
+  refreshItems() {
+    this.navigationLoaderService.loadNavigation();
+  }
+
   triggerOpenChange(item: NavigationDropdown) {
     this._openChangeSubject.next(item);
   }
