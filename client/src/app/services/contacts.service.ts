@@ -21,7 +21,8 @@ export class ContactsService {
   }
 
   getContactById(id: number): Observable<Contact> {
-    return this.networkService.get<Contact>(this.route + id);
+    var queryString = QueryStringBuilder.build(new URLSearchParams({ id: id.toString() }));
+    return this.networkService.get<Contact>(this.route + queryString);
   }
 
   addContact(contact: Contact): Observable<CreateContactResponse> {

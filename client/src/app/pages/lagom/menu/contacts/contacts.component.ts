@@ -60,9 +60,10 @@ import { BusinessServiceResponse } from 'src/app/models/common/business-service-
   ]
 })
 export class ContactsComponent implements OnInit, AfterViewInit {
-  private readonly _destroyRef: DestroyRef = inject(DestroyRef);
-  private readonly _contactsService: ContactsService = inject(ContactsService);
-  private readonly _breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
+  private readonly contactsService: ContactsService = inject(ContactsService);
+  private readonly breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
+  private readonly dialog: MatDialog = inject(MatDialog);
 
   contacts: Contact[] = [];
 
@@ -84,8 +85,6 @@ export class ContactsComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator, { static: true }) paginator?: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort?: MatSort;  
 
-  constructor(private dialog: MatDialog) {}
-
   get visibleColumns() {
     return this.columns
       .filter((column) => column.visible)
@@ -95,51 +94,30 @@ export class ContactsComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.dataSource = new MatTableDataSource();
     
-    this.initObservableBreakpointStates();
-    this.initObservableContacts();    
-    this.initSerchCtrl();
-  }
-
-  private initObservableContacts(): void {
-    var observableContacts = this._contactsService.getContacts();
-
-    observableContacts.subscribe((contacts) => {
-      this.contacts = contacts;
-    });
-
-    observableContacts
+    this.breakpointObserver
+      .observe([Breakpoints.XLarge, Breakpoints.Large, Breakpoints.Medium, Breakpoints.Small, Breakpoints.XSmall])
+      .subscribe((result) => {
+        if (result.breakpoints[Breakpoints.XLarge] || result.breakpoints[Breakpoints.Large] || result.breakpoints[Breakpoints.Medium]) {  // Show all columns for large, extra large and medium screens          
+          this.columns.forEach((column) => { column.visible = true; });
+        } else if (result.breakpoints[Breakpoints.Small] || result.breakpoints[Breakpoints.XSmall]) {   // Hide specific columns for small and extra small screens          
+          this.columns.forEach((column) => {
+            if (!['nick', 'actions'].includes(column.property)) {
+              column.visible = false;
+            }
+          });
+        }
+      });
+    
+    this.contactsService
+      .getContacts()
       .pipe(filter<Contact[]>(Boolean))
       .subscribe((contacts) => {
         this.contacts = contacts;
         this.dataSource.data = contacts;
       });
-  }
-  private initObservableBreakpointStates(): void {
-    // Show all columns on extra large, large, medium screens
-    this._breakpointObserver
-      .observe([Breakpoints.XLarge, Breakpoints.Large, Breakpoints.Medium])
-      .subscribe((result) => {
-        if (result.matches) {
-          this.columns.forEach((column) => { column.visible = true; });
-        }
-      });
 
-    // Hide columns on small and extra small screens  
-    this._breakpointObserver
-      .observe([Breakpoints.Small, Breakpoints.XSmall])
-      .subscribe((result) => {
-        if (result.matches) {
-          this.columns.forEach((column) => { 
-            if (!['nick', 'actions'].includes(column.property)) { 
-              column.visible = false; 
-            } 
-          });
-        }
-      });
-  }
-  private initSerchCtrl(): void {
-    this.searchCtrl.valueChanges
-      .pipe(takeUntilDestroyed(this._destroyRef))
+      this.searchCtrl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => this.onFilterChange(value));
   }
 
@@ -155,7 +133,7 @@ export class ContactsComponent implements OnInit, AfterViewInit {
       .subscribe((contact: Contact) => {
         // Contact is the new created contact (if the user pressed Save - otherwise it's null)
         if (contact) {
-          this._contactsService
+          this.contactsService
             .addContact(contact)
             .subscribe((createContactResponse: CreateContactResponse) => {
               this.contacts.push(createContactResponse.contact);
@@ -172,7 +150,7 @@ export class ContactsComponent implements OnInit, AfterViewInit {
       .subscribe((updatedContact: Contact) => {
         // Contact is the updated contact (if the user pressed Save - otherwise it's null)
         if (updatedContact) {
-          this._contactsService
+          this.contactsService
             .updateContact(updatedContact)
             .subscribe((updateContactResponse: UpdateContactResponse) => {
               const index = this.contacts.findIndex((existingContact) => existingContact.id === updateContactResponse.contact.id);
@@ -184,7 +162,7 @@ export class ContactsComponent implements OnInit, AfterViewInit {
   }
 
   deleteContact(contact: Contact) {
-    this._contactsService.deleteContact(contact.id).subscribe((businessServiceResponse: BusinessServiceResponse) => {
+    this.contactsService.deleteContact(contact.id).subscribe((businessServiceResponse: BusinessServiceResponse) => {
       this.contacts = this.contacts.filter((c) => c.id !== contact.id);
       this.dataSource.data = this.contacts;
     });

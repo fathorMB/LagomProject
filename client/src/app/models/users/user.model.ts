@@ -1,7 +1,7 @@
 import { Claim } from "./claim.model";
 
 export interface User {
-    id: string;
+    id: number;
     username: string;
     firstName: string;
     lastName: string;

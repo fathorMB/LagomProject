@@ -96,7 +96,8 @@ export class SidenavComponent implements OnInit {
   openProfileMenu(origin: HTMLDivElement): void {
     this.userMenuOpen$ = of(
       this.popoverService.open({
-        content: SidenavUserMenuComponent,
+        content: SidenavUserMenuComponent, 
+        data: this.user,     
         origin,
         offsetY: -8,
         width: origin.clientWidth,

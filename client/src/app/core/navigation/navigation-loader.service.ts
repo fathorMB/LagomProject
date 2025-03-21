@@ -1,4 +1,4 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { VexLayoutService } from '@vex/services/vex-layout.service';
 import { NavigationItem } from './navigation-item.interface';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -9,11 +9,11 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class NavigationLoaderService {
-  private readonly _items: BehaviorSubject<NavigationItem[]> =
+  private readonly items: BehaviorSubject<NavigationItem[]> =
     new BehaviorSubject<NavigationItem[]>([]);
 
   get items$(): Observable<NavigationItem[]> {
-    return this._items.asObservable();
+    return this.items.asObservable();
   }
 
   constructor(private readonly layoutService: VexLayoutService, private readonly menuService: MenuService) {
@@ -24,10 +24,10 @@ export class NavigationLoaderService {
     if (environment.dynamicMenuEnabled) {
       this.menuService.getItems()
           .subscribe((serverItems: NavigationItem[]) => {
-            this._items.next(serverItems);
+            this.items.next(serverItems);
           });
     } else {
-      this._items.next([
+      this.items.next([
         // {
         //   type: 'subheading',
         //   label: 'Dashboards',

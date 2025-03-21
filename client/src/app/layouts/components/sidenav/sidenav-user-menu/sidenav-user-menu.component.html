@@ -50,6 +50,18 @@
       class="vex-user-menu-item__icon icon-sm"
       svgIcon="mat:chevron_right"></mat-icon>
   </div> -->
+  <a
+    (click)="changePassword()"
+    class="vex-user-menu-item"
+    matRipple
+    matRippleColor="rgb(var(--vex-color-primary-600), 0.1)">
+    <mat-icon
+      class="vex-user-menu-item__icon icon-sm"
+      svgIcon="mat:lock"></mat-icon>
+    <div class="vex-user-menu-item__label">Change Password</div>
+  </a>
+
+  <div class="border-b border-divider mx-4"></div>
 
   <a
     (click)="signOut()"

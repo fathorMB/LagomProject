@@ -1,5 +1,4 @@
-// auth.service.ts
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { AuthenticateRequest } from '../models/users/authenticate-request.model';
 import { catchError, Observable, throwError } from 'rxjs';
 import { AuthenticateResponse } from '../models/users/authenticate-response.model';
@@ -10,8 +9,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class AuthService {
-
-  constructor(private http: HttpClient) {}
+  private readonly http: HttpClient = inject(HttpClient);
 
   isAuthenticated(): boolean {
     // For example, check if a token exists in localStorage.
