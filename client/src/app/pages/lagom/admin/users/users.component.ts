@@ -26,9 +26,10 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { BusinessServiceResponse } from 'src/app/models/common/business-service-response.model';
 import { UsersService } from 'src/app/services/users.service';
 import { User } from 'src/app/models/users/user.model';
-import { UserCreateComponent } from './user-create/user-create.component';
 import { CreateUserResponse } from 'src/app/models/users/create-user-response.model';
 import { ChangePasswordComponent } from 'src/app/components/change-password/change-password.component';
+import { MatSelectChange } from '@angular/material/select';
+import { UserCreateUpdateComponent } from './user-create-update/user-create-update.component';
 
 @Component({
   selector: 'lagom-users',
@@ -66,6 +67,32 @@ export class UsersComponent implements OnInit, AfterViewInit {
   private readonly dialog: MatDialog = inject(MatDialog);
 
   users: User[] = [];
+  claimLabels: any[] = [
+    {
+      text: 'admin',
+      textClass: 'text-cyan-600',
+      bgClass: 'bg-cyan-600/10',
+      previewClass: 'bg-cyan-600'
+    },
+    {
+      text: 'data-operator',
+      textClass: 'text-teal-600',
+      bgClass: 'bg-teal-600/10',
+      previewClass: 'bg-teal-600'
+    },
+    {
+      text: 'example',
+      textClass: 'text-purple-600',
+      bgClass: 'bg-purple-600/10',
+      previewClass: 'bg-purple-600'
+    }
+    // {
+    //   text: '...',
+    //   textClass: 'text-green-600',
+    //   bgClass: 'bg-green-600/10',
+    //   previewClass: 'bg-green-600'
+    // }
+  ];
 
   @Input()
   columns: TableColumn<User>[] = [
@@ -73,7 +100,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     { label: 'First Name', property: 'firstName', type: 'text', visible: true },
     { label: 'Last Name', property: 'lastName', type: 'text', visible: true },
     { label: 'Is Active', property: 'isActive', type: 'text', visible: true },
-    //{ label: 'Claims', property: 'claims', type: 'text', visible: true },
+    { label: 'Claims', property: 'claims', type: 'button', visible: true },
     { label: 'Actions', property: 'actions', type: 'button', visible: true }
   ];
   pageSize = 10;
@@ -91,15 +118,22 @@ export class UsersComponent implements OnInit, AfterViewInit {
       .map((column) => column.property);
   }
 
-  ngOnInit() {
-    this.dataSource = new MatTableDataSource();
+  getUserClaimsLabels(user: User) {
+    return this.claimLabels.filter(claimLabel => (user.claims ?? []).includes(claimLabel.name))
+  }
 
+  ngOnInit() {
+    this.dataSource = new MatTableDataSource();      
+    
     this.breakpointObserver
       .observe([Breakpoints.XLarge, Breakpoints.Large, Breakpoints.Medium, Breakpoints.Small, Breakpoints.XSmall])
       .subscribe((result) => {
-        if (result.breakpoints[Breakpoints.XLarge] || result.breakpoints[Breakpoints.Large] || result.breakpoints[Breakpoints.Medium]) {  // Show all columns for large, extra large and medium screens          
+        // Show all columns for large, extra large and medium screens          
+        if (result.breakpoints[Breakpoints.XLarge] || result.breakpoints[Breakpoints.Large] || result.breakpoints[Breakpoints.Medium]) {  
           this.columns.forEach((column) => { column.visible = true; });
-        } else if (result.breakpoints[Breakpoints.Small] || result.breakpoints[Breakpoints.XSmall]) {   // Hide specific columns for small and extra small screens          
+        }
+        // Hide specific columns for small and extra small screens           
+        else if (result.breakpoints[Breakpoints.Small] || result.breakpoints[Breakpoints.XSmall]) {
           this.columns.forEach((column) => {
             if (!['username', 'actions'].includes(column.property)) {
               column.visible = false;
@@ -126,13 +160,16 @@ export class UsersComponent implements OnInit, AfterViewInit {
     if (this.sort) { this.dataSource.sort = this.sort; }
   }
 
+  addClaim(user: User) {
+    alert('claim added for user ' + user.username);
+  }
+
   createUser() {
     this.dialog
-      .open(UserCreateComponent)
+      .open(UserCreateUpdateComponent)
       .afterClosed()
-      .subscribe((userAndPassword) => {
-        // User is the new created user (if the user pressed Save - otherwise it's null)
-        if (userAndPassword.user && userAndPassword.password) {
+      .subscribe((userAndPassword) => {        
+        if (userAndPassword.user && userAndPassword.password) {   // UserAndPassword is the new created user and password (if the user pressed Save - otherwise it's null)   
           this.usersService
             .addUser(userAndPassword.user, userAndPassword.password)
             .subscribe((createUserResponse: CreateUserResponse) => {
@@ -143,8 +180,20 @@ export class UsersComponent implements OnInit, AfterViewInit {
       });
   }
 
+
   updateUser(user: User) {
-    //TODO: Implement
+    this.dialog
+      .open(UserCreateUpdateComponent, { data: user })
+      .afterClosed()
+      .subscribe((user) => {
+        if (user) {    // User is the updated user (if the user pressed Save - otherwise it's null)
+          this.usersService
+            .updateUser(user)
+            .subscribe((businessServiceResponse: BusinessServiceResponse) => {
+              console.log('user updated: ' + user.username);
+            });
+        }
+      });
   }
 
   deleteUser(user: User) {
@@ -160,9 +209,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
     this.dialog
       .open(ChangePasswordComponent, { data: user })
       .afterClosed()
-      .subscribe((newPassword: string) => {        
-        // NewPassword is the new created password (if the user pressed Save - otherwise it's null)
-        if (newPassword) {
+      .subscribe((newPassword: string) => {                
+        if (newPassword) {    // NewPassword is the new created password (if the user pressed Save - otherwise it's null)
           this.usersService
             .changePassword(user.id, newPassword)
             .subscribe((businessServiceResponse: BusinessServiceResponse) => {
@@ -171,6 +219,11 @@ export class UsersComponent implements OnInit, AfterViewInit {
         }
       });
   }
+
+  // onClaimLabelChange(change: MatSelectChange, row: User) {
+  //   const index = this.users.findIndex((user) => user === row);
+  //   this.users[index].claims = change.value;
+  // }
 
   onFilterChange(value: string) {
     if (!this.dataSource) {

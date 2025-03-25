@@ -1,0 +1,64 @@
+<form (ngSubmit)="save()" [formGroup]="form">
+    <div class="flex items-center" mat-dialog-title>
+        <h2 *ngIf="form.controls.username.value" class="headline m-0 flex-auto">
+            {{ form.controls.username.value }}
+        </h2>
+        <h2 *ngIf="!form.controls.username.value" class="headline m-0 flex-auto">
+            New User
+        </h2>
+    </div>
+
+    <mat-divider class="text-border"></mat-divider>
+
+    <mat-dialog-content class="flex flex-col">
+        <div class="flex flex-col sm:flex-row">
+            <mat-form-field class="flex-auto">
+                <mat-label>User</mat-label>
+                <input cdkFocusInitial formControlName="username" aria-label="Username" matInput />
+                <mat-icon matIconPrefix svgIcon="mat:person"></mat-icon>
+            </mat-form-field>
+
+            <mat-form-field class="sm:ml-6 flex-auto">
+                <mat-label>First Name</mat-label>
+                <input formControlName="firstName" aria-label="First Name" matInput />
+                <mat-icon matIconPrefix svgIcon="mat:person"></mat-icon>
+            </mat-form-field>
+
+            <mat-form-field class="sm:ml-6 flex-auto">
+                <mat-label>Last Name</mat-label>
+                <input formControlName="lastName" aria-label="Last Name" matInput />
+                <mat-icon matIconPrefix svgIcon="mat:person"></mat-icon>
+            </mat-form-field>
+        </div>
+
+        <div class="flex flex-col sm:flex-row">
+            <mat-form-field class="flex-auto" appearance="outline">
+                <mat-label>Claims</mat-label>
+                <mat-select formControlName="claims" multiple>
+                  <mat-option *ngFor="let claim of allClaims" [value]="claim.id">
+                    {{ claim.name }}
+                  </mat-option>
+                </mat-select>
+                
+                <p>Selected Claims:</p>
+                <ul>
+                  <li *ngFor="let claimId of form.controls.claims.value">
+                    <!-- Use the getClaimById method to get the Claim object by id -->
+                    {{ getClaimById(claimId)?.name }} - 
+                    {{ getClaimById(claimId)?.description }}
+                  </li>
+                </ul>
+              </mat-form-field>
+
+            <div class="sm:ml-6 flex-auto" appearance="outline">
+                <mat-slide-toggle formControlName="isActive">Activate User</mat-slide-toggle>
+            </div>
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close type="button">Cancel</button>
+        <button *ngIf="isCreateMode()" color="primary" mat-flat-button type="submit">Create User</button>
+        <button *ngIf="isUpdateMode()" color="primary" mat-flat-button type="submit">Update User</button>
+    </mat-dialog-actions>
+</form>

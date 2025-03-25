@@ -35,6 +35,29 @@
                 </ng-container>
             </ng-container>
 
+             <!-- Label Column -->
+        <ng-container matColumnDef="claims">
+            <th
+              *matHeaderCellDef
+              class="uppercase"
+              mat-header-cell
+              mat-sort-header>
+              Claims
+            </th>
+            <td *matCellDef="let row" mat-cell>
+              <div
+                (click)="$event.stopPropagation()"                
+                class="flex items-center gap-1">
+                <div
+                  *ngFor="let claim of this.getUserClaimsLabels(row)"                
+                  [ngClass]="[claim.textClass, claim.bgClass]"
+                  class="rounded px-2 py-1 font-medium text-xs flex-none">
+                  {{ claim.text }}
+                </div>                
+              </div>
+            </td>
+          </ng-container>
+
             <!-- Action Column -->
             <ng-container matColumnDef="actions">
                 <th *matHeaderCellDef mat-header-cell></th>
@@ -47,7 +70,7 @@
                 </td>
             </ng-container>
 
-            <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
+            <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>                        
             <tr (click)="updateUser(row)" *matRowDef="let row; columns: visibleColumns" @fadeInUp
                 class="hover:bg-hover transition duration-400 ease-out-swift cursor-pointer" mat-row></tr>
         </table>
