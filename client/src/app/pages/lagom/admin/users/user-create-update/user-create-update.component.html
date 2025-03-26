@@ -18,7 +18,15 @@
                 <mat-icon matIconPrefix svgIcon="mat:person"></mat-icon>
             </mat-form-field>
 
-            <mat-form-field class="sm:ml-6 flex-auto">
+            <mat-form-field *ngIf="this.isCreateMode()" class="sm:ml-6 flex-auto">
+                <mat-label>Password</mat-label>
+                <input cdkFocusInitial formControlName="password" aria-label="Password" matInput />
+                <mat-icon matIconPrefix svgIcon="mat:person"></mat-icon>
+            </mat-form-field>
+        </div>
+
+        <div class="flex flex-col sm:flex-row">
+            <mat-form-field class="flex-auto">
                 <mat-label>First Name</mat-label>
                 <input formControlName="firstName" aria-label="First Name" matInput />
                 <mat-icon matIconPrefix svgIcon="mat:person"></mat-icon>
@@ -35,24 +43,23 @@
             <mat-form-field class="flex-auto" appearance="outline">
                 <mat-label>Claims</mat-label>
                 <mat-select formControlName="claims" multiple>
-                  <mat-option *ngFor="let claim of allClaims" [value]="claim.id">
-                    {{ claim.name }}
-                  </mat-option>
+                    <mat-option *ngFor="let claim of allClaims" [value]="claim">
+                        {{ claim.name }}
+                    </mat-option>
                 </mat-select>
-                
+
                 <p>Selected Claims:</p>
                 <ul>
-                  <li *ngFor="let claimId of form.controls.claims.value">
-                    <!-- Use the getClaimById method to get the Claim object by id -->
-                    {{ getClaimById(claimId)?.name }} - 
-                    {{ getClaimById(claimId)?.description }}
-                  </li>
+                    <li *ngFor="let claim of form.controls.claims.value">                        
+                        {{ claim.name }} -
+                        {{ claim.description }}
+                    </li>
                 </ul>
-              </mat-form-field>
+            </mat-form-field>
+        </div>
 
-            <div class="sm:ml-6 flex-auto" appearance="outline">
-                <mat-slide-toggle formControlName="isActive">Activate User</mat-slide-toggle>
-            </div>
+        <div class="sm:ml-6 flex-auto" appearance="outline">
+            <mat-slide-toggle formControlName="isActive">Activate</mat-slide-toggle>
         </div>
     </mat-dialog-content>
 

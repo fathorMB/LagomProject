@@ -46,13 +46,12 @@
             </th>
             <td *matCellDef="let row" mat-cell>
               <div
-                (click)="$event.stopPropagation()"                
+                (click)="$event.stopPropagation(); updateUser(row);"                
                 class="flex items-center gap-1">
                 <div
-                  *ngFor="let claim of this.getUserClaimsLabels(row)"                
-                  [ngClass]="[claim.textClass, claim.bgClass]"
-                  class="rounded px-2 py-1 font-medium text-xs flex-none">
-                  {{ claim.text }}
+                  *ngFor="let claim of row.claims"                                  
+                  class="rounded px-2 py-1 font-medium text-xs flex-none text-black-600 bg-orange-600/50">
+                  {{ claim.name }}
                 </div>                
               </div>
             </td>
@@ -81,8 +80,12 @@
 
 <mat-menu #actionsMenu="matMenu" xPosition="before" yPosition="below">
     <ng-template let-user="user" matMenuContent>
-        <button (click)="changePassword(user)" mat-menu-item>
+        <button (click)="updateUser(user)" mat-menu-item>
             <mat-icon svgIcon="mat:edit"></mat-icon>
+            <span>Edit</span>
+          </button>
+        <button (click)="changePassword(user)" mat-menu-item>
+            <mat-icon svgIcon="mat:lock"></mat-icon>
             <span>Change Password</span>
         </button>
         <button (click)="deleteUser(user)" mat-menu-item>

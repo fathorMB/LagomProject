@@ -28,7 +28,6 @@ import { UsersService } from 'src/app/services/users.service';
 import { User } from 'src/app/models/users/user.model';
 import { CreateUserResponse } from 'src/app/models/users/create-user-response.model';
 import { ChangePasswordComponent } from 'src/app/components/change-password/change-password.component';
-import { MatSelectChange } from '@angular/material/select';
 import { UserCreateUpdateComponent } from './user-create-update/user-create-update.component';
 
 @Component({
@@ -67,32 +66,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
   private readonly dialog: MatDialog = inject(MatDialog);
 
   users: User[] = [];
-  claimLabels: any[] = [
-    {
-      text: 'admin',
-      textClass: 'text-cyan-600',
-      bgClass: 'bg-cyan-600/10',
-      previewClass: 'bg-cyan-600'
-    },
-    {
-      text: 'data-operator',
-      textClass: 'text-teal-600',
-      bgClass: 'bg-teal-600/10',
-      previewClass: 'bg-teal-600'
-    },
-    {
-      text: 'example',
-      textClass: 'text-purple-600',
-      bgClass: 'bg-purple-600/10',
-      previewClass: 'bg-purple-600'
-    }
-    // {
-    //   text: '...',
-    //   textClass: 'text-green-600',
-    //   bgClass: 'bg-green-600/10',
-    //   previewClass: 'bg-green-600'
-    // }
-  ];
 
   @Input()
   columns: TableColumn<User>[] = [
@@ -116,10 +89,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
     return this.columns
       .filter((column) => column.visible)
       .map((column) => column.property);
-  }
-
-  getUserClaimsLabels(user: User) {
-    return this.claimLabels.filter(claimLabel => (user.claims ?? []).includes(claimLabel.name))
   }
 
   ngOnInit() {
@@ -160,10 +129,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
     if (this.sort) { this.dataSource.sort = this.sort; }
   }
 
-  addClaim(user: User) {
-    alert('claim added for user ' + user.username);
-  }
-
   createUser() {
     this.dialog
       .open(UserCreateUpdateComponent)
@@ -179,7 +144,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
         }
       });
   }
-
 
   updateUser(user: User) {
     this.dialog
@@ -219,11 +183,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
         }
       });
   }
-
-  // onClaimLabelChange(change: MatSelectChange, row: User) {
-  //   const index = this.users.findIndex((user) => user === row);
-  //   this.users[index].claims = change.value;
-  // }
 
   onFilterChange(value: string) {
     if (!this.dataSource) {

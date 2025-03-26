@@ -57,27 +57,24 @@ export class UsersService {
     return this.networkService.post<BusinessServiceResponse>(this.route + '/change-password', changePasswordRequest);
   }
 
-  getClaims(): Observable<Claim[]> {
+  getClaims(): Claim[] {
     //TODO: Implement this method with the related http request to the backend
-    return new Observable<Claim[]>(observer => {
-      observer.next([
-        {
-          id: '1',
-          name: 'admin',
-          description: 'Full control'
-        },
-        {
-          id: '2',
-          name: 'example',
-          description: 'Can run example controller routes'
-        },
-        {
-          id: '3',
-          name: 'data-operator',
-          description: 'Can run CRUD and service operations on data'
-        }
-      ]);
-      observer.complete();
-    });
+    return [
+      {
+        id: '1',
+        name: 'admin',
+        description: 'Full control'
+      },
+      {
+        id: '2',
+        name: 'example',
+        description: 'Can run example controller routes'
+      },
+      {
+        id: '3',
+        name: 'data-operator',
+        description: 'Can run CRUD and service operations on data'
+      }
+    ];
   }
 }
