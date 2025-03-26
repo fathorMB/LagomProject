@@ -1,5 +1,5 @@
 import { CommonModule, NgIf } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -48,9 +48,15 @@ export class UserCreateUpdateComponent implements OnInit {
 
   allClaims: Claim[] = [];
 
+  /* password visibility toggle params */
+  inputType = 'password';
+  visible = false;
+
+
   constructor(@Inject(MAT_DIALOG_DATA) public defaults: User | undefined,
     private dialogRef: MatDialogRef<UserCreateUpdateComponent>,
     private fb: FormBuilder,
+    private cd: ChangeDetectorRef,
     private usersService: UsersService
   ) {}
 
@@ -80,6 +86,19 @@ export class UserCreateUpdateComponent implements OnInit {
   isUpdateMode() { return this.mode === 'update'; }
 
   compareClaims(c1: Claim, c2: Claim): boolean { return c1.id === c2.id; }
+
+  /* password visibility toggle function */
+  toggleVisibility() {
+    if (this.visible) {
+      this.inputType = 'password';
+      this.visible = false;
+      this.cd.markForCheck();
+    } else {
+      this.inputType = 'text';
+      this.visible = true;
+      this.cd.markForCheck();
+    }
+  }
 
   createUser() {
     const user = this.form.value;    

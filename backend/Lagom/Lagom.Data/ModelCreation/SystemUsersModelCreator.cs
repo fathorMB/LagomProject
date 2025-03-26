@@ -1,5 +1,7 @@
 ﻿using Lagom.Model;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Lagom.Data.ModelCreation
 {
@@ -27,7 +29,7 @@ namespace Lagom.Data.ModelCreation
                     FirstName = "System",
                     LastName = "Admin",
                     Username = "admin",
-                    AccessKeyHash = "21232f297a57a5a743894a0e4a801fc3",
+                    AccessKeyHash = HashPassword("admin"), // Update the password hash
                     IsActive = true
                 },
                 new User
@@ -36,7 +38,7 @@ namespace Lagom.Data.ModelCreation
                     FirstName = "Moreno",
                     LastName = "Bruschi",
                     Username = "moro",
-                    AccessKeyHash = "21232f297a57a5a743894a0e4a801fc3",
+                    AccessKeyHash = HashPassword("admin"), // Update the password hash
                     IsActive = true
                 }
             );
@@ -79,6 +81,15 @@ namespace Lagom.Data.ModelCreation
                     UserId = 2
                 }
             );
+        }
+
+        private static string HashPassword(string password)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
+            }
         }
     }
 }

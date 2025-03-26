@@ -54,8 +54,26 @@ namespace Lagom.BusinessServices.EFCore
                         new NavigationLink
                         {
                             Label = "Contatti",
-                            Icon = "mat:picture_in_picture",
+                            Icon = "mat:groups",
                             Route = "lagom/menu/contacts"
+                        },
+                        new NavigationLink
+                        {
+                            Label = "Calendario",
+                            Icon = "mat:event",
+                            Route = "lagom/menu/calendar"
+                        },
+                        new NavigationLink
+                        {
+                            Label = "Eventi",
+                            Icon = "mat:festival",
+                            Route = "lagom/menu/events"
+                        },
+                        new NavigationLink
+                        {
+                            Label = "Magazzino",
+                            Icon = "mat:warehouse",
+                            Route = "lagom/menu/warehouse"
                         }
                     }
                 },

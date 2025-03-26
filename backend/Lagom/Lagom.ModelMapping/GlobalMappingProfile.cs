@@ -8,7 +8,9 @@ namespace Lagom.ModelMapping
     {
         public GlobalMappingProfile()
         {
-            CreateMap<User, UserContract>();
+            CreateMap<User, UserContract>()
+                .ForMember(dest => dest.Claims, opt => opt.MapFrom(src => src.UsersClaims.Select(uc => uc.Claim)));
+
             CreateMap<Claim, ClaimContract>();
             CreateMap<Contact, ContactContract>();
             CreateMap<UploadedFile, FileContract>();

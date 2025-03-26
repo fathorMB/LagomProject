@@ -18,11 +18,28 @@
                 <mat-icon matIconPrefix svgIcon="mat:person"></mat-icon>
             </mat-form-field>
 
-            <mat-form-field class="sm:ml-6 flex-auto">
-                <mat-label>Password</mat-label>
-                <input cdkFocusInitial formControlName="password" aria-label="Password" matInput />
-                <mat-icon matIconPrefix svgIcon="mat:person"></mat-icon>
-            </mat-form-field>
+            <div class="flex flex-col sm:flex-row">            
+                <mat-form-field class="sm:ml-6 flex-auto">
+                    <mat-label>New Password</mat-label>
+                    <input
+                      [type]="inputType"
+                      formControlName="password"
+                      aria-label="Password"
+                      matInput
+                      required />
+                    <button
+                      (click)="toggleVisibility()"
+                      mat-icon-button
+                      matIconSuffix
+                      type="button">
+                      <mat-icon *ngIf="visible" svgIcon="mat:visibility"></mat-icon>
+                      <mat-icon *ngIf="!visible" svgIcon="mat:visibility_off"></mat-icon>
+                    </button>                    
+                    <mat-error *ngIf="form.controls.password?.hasError('required')"
+                    >Specificare una Password
+                    </mat-error>
+                  </mat-form-field>
+            </div>
         </div>
 
         <div *ngIf="this.isCreateMode()" class="flex flex-col sm:flex-row">

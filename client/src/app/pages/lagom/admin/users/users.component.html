@@ -13,8 +13,8 @@
 
             <span class="flex-1"></span>
 
-            <button (click)="createUser()" class="ml-4 flex-none" color="primary" mat-mini-fab
-                matTooltip="Add User" type="button">
+            <button (click)="createUser()" class="ml-4 flex-none" color="primary" mat-mini-fab matTooltip="Add User"
+                type="button">
                 <mat-icon svgIcon="mat:add"></mat-icon>
             </button>
         </div>
@@ -35,42 +35,50 @@
                 </ng-container>
             </ng-container>
 
-             <!-- Label Column -->
-        <ng-container matColumnDef="claims">
-            <th
-              *matHeaderCellDef
-              class="uppercase"
-              mat-header-cell
-              mat-sort-header>
-              Claims
-            </th>
-            <td *matCellDef="let row" mat-cell>
-              <div
-                (click)="$event.stopPropagation(); updateUser(row);"                
-                class="flex items-center gap-1">
-                <div
-                  *ngFor="let claim of row.claims"                                  
-                  class="rounded px-2 py-1 font-medium text-xs flex-none bg-primary-600/10 text-secondary">
-                  {{ claim.name }}
-                </div>                
-              </div>
-            </td>
-          </ng-container>
+            <!-- Is Active Column -->
+            <ng-container matColumnDef="isActive">
+                <th *matHeaderCellDef class="uppercase" mat-header-cell>
+                    Is Active
+                </th>
+                <td *matCellDef="let row" mat-cell>
+                    <mat-slide-toggle [checked]="row.isActive" (change)="toggleActive(row);">
+                    </mat-slide-toggle>
+                </td>
+            </ng-container>
+
+            <!-- Label Column -->
+            <ng-container matColumnDef="claims">
+                <th *matHeaderCellDef class="uppercase" mat-header-cell mat-sort-header>
+                    Claims
+                </th>
+                <td *matCellDef="let row" mat-cell>
+                    <div (click)="$event.stopPropagation();" class="flex items-center gap-1">
+                        <div *ngFor="let claim of row.claims"
+                            class="rounded px-2 py-1 font-medium text-xs flex-none bg-primary-600/10 text-secondary">
+                            {{ claim.name }}
+                        </div>
+                        <div
+                            (click)="$event.stopPropagation(); updateUser(row);"
+                            class="bg-primary-600/10 text-secondary cursor-pointer hover:bg-hover flex-none flex items-center justify-center">
+                            <mat-icon class="icon-sm" svgIcon="mat:add"></mat-icon>
+                        </div>
+                    </div>
+                </td>
+            </ng-container>            
 
             <!-- Action Column -->
             <ng-container matColumnDef="actions">
                 <th *matHeaderCellDef mat-header-cell></th>
                 <td *matCellDef="let row" class="w-10 text-secondary" mat-cell>
-                    <button (click)="$event.stopPropagation()" 
-                        [matMenuTriggerData]="{ user: row }"
+                    <button (click)="$event.stopPropagation()" [matMenuTriggerData]="{ user: row }"
                         [matMenuTriggerFor]="actionsMenu" mat-icon-button type="button">
                         <mat-icon svgIcon="mat:more_horiz"></mat-icon>
                     </button>
                 </td>
             </ng-container>
 
-            <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>                        
-            <tr (click)="updateUser(row)" *matRowDef="let row; columns: visibleColumns" @fadeInUp
+            <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
+            <tr *matRowDef="let row; columns: visibleColumns" @fadeInUp
                 class="hover:bg-hover transition duration-400 ease-out-swift cursor-pointer" mat-row></tr>
         </table>
 
@@ -86,8 +94,8 @@
         </button>
         <button (click)="updateUser(user)" mat-menu-item>
             <mat-icon svgIcon="mat:edit"></mat-icon>
-            <span>Edit</span>
-          </button>        
+            <span>Edit Claims</span>
+        </button>
         <button (click)="deleteUser(user)" mat-menu-item>
             <mat-icon svgIcon="mat:delete"></mat-icon>
             <span>Delete</span>

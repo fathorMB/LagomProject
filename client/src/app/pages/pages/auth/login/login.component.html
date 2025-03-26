@@ -37,8 +37,7 @@
             type="button">
             <mat-icon *ngIf="visible" svgIcon="mat:visibility"></mat-icon>
             <mat-icon *ngIf="!visible" svgIcon="mat:visibility_off"></mat-icon>
-          </button>
-          <mat-hint>Clicca qui per visualizzare</mat-hint>
+          </button>                    
           <mat-error *ngIf="form.controls.password.hasError('required')"
           >Specificare una Password per l'autenticazione
           </mat-error>
