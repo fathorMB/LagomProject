@@ -75,9 +75,7 @@ export class UserCreateUpdateComponent implements OnInit {
   isCreateMode() { return this.mode === 'create'; }
   isUpdateMode() { return this.mode === 'update'; }
 
-  /* To string is required because one id value is number and the other is string, both are declared stings by the interface Claim, 
-     maybe with the http call instead of the fakeo one to allclaims the problem will be fixed */
-  compareClaims(c1: Claim, c2: Claim): boolean { return c1.id.toString() === c2.id.toString(); }
+  compareClaims(c1: Claim, c2: Claim): boolean { return c1.id === c2.id; }
 
   createUser() {
     const user = this.form.value;    
