@@ -11,6 +11,7 @@ import { Claim } from '../models/users/claim.model';
 import { BusinessServiceResponseStatus } from '../models/abstracts/api-response.model';
 import { UpdateUserResponse } from '../models/users/update-user-response.model';
 import { UpdateUserRequest } from '../models/users/update-user-request.model';
+import { UserToggleEnableResponse } from '../models/users/user-toggle-enable-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -56,5 +57,15 @@ export class UsersService {
 
   getClaims(): Observable<Claim[]> {
     return this.networkService.get<Claim[]>(this.route + '/claims');
+  }
+
+  enableUser(id: number): Observable<UserToggleEnableResponse> {
+    const queryString = QueryStringBuilder.build(new URLSearchParams({ id: id.toString() }));
+    return this.networkService.get<UserToggleEnableResponse>(this.route + '/enable' + queryString);
+  }
+
+  disableUser(id: number): Observable<UserToggleEnableResponse> {
+    const queryString = QueryStringBuilder.build(new URLSearchParams({ id: id.toString() }));
+    return this.networkService.get<UserToggleEnableResponse>(this.route + '/disable' + queryString);
   }
 }

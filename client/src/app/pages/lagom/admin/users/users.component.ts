@@ -30,6 +30,8 @@ import { CreateUserResponse } from 'src/app/models/users/create-user-response.mo
 import { ChangePasswordComponent } from 'src/app/components/change-password/change-password.component';
 import { UserCreateUpdateComponent } from './user-create-update/user-create-update.component';
 import { UpdateUserResponse } from 'src/app/models/users/update-user-response.model';
+import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { UserToggleEnableResponse } from 'src/app/models/users/user-toggle-enable-response.model';
 
 @Component({
   selector: 'lagom-users',
@@ -51,6 +53,7 @@ import { UpdateUserResponse } from 'src/app/models/users/update-user-response.mo
     MatMenuModule,
     MatTableModule,
     MatSortModule,
+    MatSlideToggleModule,
     MatCheckboxModule,
     NgFor,
     NgClass,
@@ -73,7 +76,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     { label: 'User', property: 'username', type: 'text', visible: true },
     { label: 'First Name', property: 'firstName', type: 'text', visible: true },
     { label: 'Last Name', property: 'lastName', type: 'text', visible: true },
-    { label: 'Is Active', property: 'isActive', type: 'text', visible: true },
+    { label: 'Is Active', property: 'isActive', type: 'button', visible: true },
     { label: 'Claims', property: 'claims', type: 'button', visible: true },
     { label: 'Actions', property: 'actions', type: 'button', visible: true }
   ];
@@ -188,6 +191,28 @@ export class UsersComponent implements OnInit, AfterViewInit {
             });
         }
       });
+  }
+
+  toggleActive(user: User) {
+    if(user.isActive) {
+      this.usersService.disableUser(user.id).subscribe((userToggleEnableResponse: UserToggleEnableResponse) => {
+        // Find and update the user in the array
+        const index = this.users.findIndex(u => u.id === userToggleEnableResponse.user.id);
+        if (index !== -1) {
+          this.users[index] = userToggleEnableResponse.user;
+          this.dataSource.data = [...this.users]; // Refresh the dataSource
+        }      
+      });
+    } else {
+      this.usersService.enableUser(user.id).subscribe((userToggleEnableResponse: UserToggleEnableResponse) => {
+        // Find and update the user in the array
+        const index = this.users.findIndex(u => u.id === userToggleEnableResponse.user.id);
+        if (index !== -1) {
+          this.users[index] = userToggleEnableResponse.user;
+          this.dataSource.data = [...this.users]; // Refresh the dataSource
+        }
+      });
+    }
   }
 
   onFilterChange(value: string) {
