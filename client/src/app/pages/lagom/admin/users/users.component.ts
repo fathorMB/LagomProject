@@ -29,6 +29,7 @@ import { User } from 'src/app/models/users/user.model';
 import { CreateUserResponse } from 'src/app/models/users/create-user-response.model';
 import { ChangePasswordComponent } from 'src/app/components/change-password/change-password.component';
 import { UserCreateUpdateComponent } from './user-create-update/user-create-update.component';
+import { UpdateUserResponse } from 'src/app/models/users/update-user-response.model';
 
 @Component({
   selector: 'lagom-users',
@@ -153,8 +154,13 @@ export class UsersComponent implements OnInit, AfterViewInit {
         if (user) {    // User is the updated user (if the user pressed Save - otherwise it's null)
           this.usersService
             .updateUser(user)
-            .subscribe((businessServiceResponse: BusinessServiceResponse) => {
-              console.log('user updated: ' + user.username);
+            .subscribe((updateUserResponse: UpdateUserResponse) => {
+              // Find and update the user in the array
+              const index = this.users.findIndex(u => u.id === updateUserResponse.user.id);
+              if (index !== -1) {
+                this.users[index] = updateUserResponse.user;
+                this.dataSource.data = [...this.users]; // Refresh the dataSource
+              }              
             });
         }
       });

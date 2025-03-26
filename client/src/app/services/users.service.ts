@@ -9,6 +9,8 @@ import { CreateUserRequest } from '../models/users/create-user-request.model';
 import { ChangePasswordRequest } from '../models/users/change-password-request.model';
 import { Claim } from '../models/users/claim.model';
 import { BusinessServiceResponseStatus } from '../models/abstracts/api-response.model';
+import { UpdateUserResponse } from '../models/users/update-user-response.model';
+import { UpdateUserRequest } from '../models/users/update-user-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +24,7 @@ export class UsersService {
   }
 
   addUser(user: User, password: string): Observable<CreateUserResponse> {
-    var createUserRequest: CreateUserRequest = {
+    const createUserRequest: CreateUserRequest = {
       user: user,
       password: password,
       requestId: ''
@@ -30,26 +32,21 @@ export class UsersService {
     return this.networkService.post<CreateUserResponse>(this.route, createUserRequest);
   }
 
-  updateUser(user: User) : Observable<BusinessServiceResponse> {
-    //TODO: Implement this method with the related http request to the backend
-    return new Observable<BusinessServiceResponse>(observer => {
-      observer.next({  
-        requestId: '',
-        responseId: '',
-        businessServiceStatus: BusinessServiceResponseStatus.Completed,
-        businessServiceMessages: []
-      });
-      observer.complete();
-    });
+  updateUser(user: User) : Observable<UpdateUserResponse> {
+    const updateUserRequest: UpdateUserRequest = {
+      user: user,
+      requestId: ''
+    };
+    return this.networkService.put<UpdateUserResponse>(this.route, updateUserRequest);
   }
 
   deleteUser(id: number): Observable<BusinessServiceResponse> {
-    var queryString = QueryStringBuilder.build(new URLSearchParams({ id: id.toString() }));
+    const queryString = QueryStringBuilder.build(new URLSearchParams({ id: id.toString() }));
     return this.networkService.delete<BusinessServiceResponse>(this.route + queryString);
   }
 
   changePassword(userId: number, newPassword: string): Observable<BusinessServiceResponse> {
-    var changePasswordRequest: ChangePasswordRequest = {
+    const changePasswordRequest: ChangePasswordRequest = {
         userId: userId,
         newPassword: newPassword,
         requestId: ''
