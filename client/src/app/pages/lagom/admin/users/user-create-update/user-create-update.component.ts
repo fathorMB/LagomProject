@@ -41,7 +41,7 @@ export class UserCreateUpdateComponent implements OnInit {
     username: [this.defaults?.username || ''],
     firstName: [this.defaults?.firstName || ''],
     lastName: [this.defaults?.lastName || ''],
-    isActive: [this.defaults?.isActive],
+    isActive: [this.defaults?.isActive || false],
     claims: [this.defaults?.claims || []],
     ...(this.mode === 'create' ? { password: ['', Validators.required] } : {})
   });
@@ -55,7 +55,11 @@ export class UserCreateUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.allClaims = this.usersService.getClaims();
+    this.usersService
+    .getClaims()
+    .subscribe((claims) => {
+      this.allClaims = claims;
+    });
 
     if (this.defaults) { 
       this.mode = 'update'; 

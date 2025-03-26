@@ -38,9 +38,8 @@ export class SidenavUserMenuComponent implements OnInit {
     this.dialog
       .open(ChangePasswordComponent, { data: this.user })
       .afterClosed()
-      .subscribe((newPassword: string) => {
-        // NewPassword is the new created password (if the user pressed Save - otherwise it's null)
-        if (newPassword) {
+      .subscribe((newPassword: string) => {        
+        if (newPassword) {    // NewPassword is the new created password (if the user pressed Save - otherwise it's null)
           this.usersService
             .changePassword(this.user.id, newPassword)
             .subscribe((businessServiceResponse: BusinessServiceResponse) => {

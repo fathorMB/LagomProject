@@ -14,7 +14,7 @@ import { BusinessServiceResponseStatus } from '../models/abstracts/api-response.
   providedIn: 'root'
 })
 export class UsersService {
-    private readonly networkService = inject(NetworkService);
+  private readonly networkService = inject(NetworkService);
   private readonly route = 'users';
 
   getUsers(): Observable<User[]> {
@@ -57,24 +57,7 @@ export class UsersService {
     return this.networkService.post<BusinessServiceResponse>(this.route + '/change-password', changePasswordRequest);
   }
 
-  getClaims(): Claim[] {
-    //TODO: Implement this method with the related http request to the backend
-    return [
-      {
-        id: 1,
-        name: 'admin',
-        description: 'Full control'
-      },
-      {
-        id: 2,
-        name: 'example',
-        description: 'Can run example controller routes'
-      },
-      {
-        id: 3,
-        name: 'data-operator',
-        description: 'Can run CRUD and service operations on data'
-      }
-    ];
+  getClaims(): Observable<Claim[]> {
+    return this.networkService.get<Claim[]>(this.route + '/claims');
   }
 }
