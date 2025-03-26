@@ -57,7 +57,16 @@ export class UserCreateUpdateComponent implements OnInit {
   ngOnInit() {
     this.allClaims = this.usersService.getClaims();
 
-    if (this.defaults) { this.mode = 'update'; } 
+    if (this.defaults) { 
+      this.mode = 'update'; 
+
+      this.form.patchValue({
+        ...this.defaults,
+        claims: this.defaults.claims?.map(claim =>
+          this.allClaims.find(c => c.id === claim.id)
+        ).filter((claim): claim is Claim => claim !== undefined)
+      });
+    } 
     else { this.defaults = {} as User; }
 
     this.form.patchValue(this.defaults);
@@ -65,6 +74,10 @@ export class UserCreateUpdateComponent implements OnInit {
 
   isCreateMode() { return this.mode === 'create'; }
   isUpdateMode() { return this.mode === 'update'; }
+
+  /* To string is required because one id value is number and the other is string, both are declared stings by the interface Claim, 
+     maybe with the http call instead of the fakeo one to allclaims the problem will be fixed */
+  compareClaims(c1: Claim, c2: Claim): boolean { return c1.id.toString() === c2.id.toString(); }
 
   createUser() {
     const user = this.form.value;    
@@ -85,5 +98,3 @@ export class UserCreateUpdateComponent implements OnInit {
     else if (this.mode === 'update') { this.updateUser(); }
   }
 }
-
-

@@ -42,19 +42,20 @@
         <div class="flex flex-col sm:flex-row">
             <mat-form-field class="flex-auto" appearance="outline">
                 <mat-label>Claims</mat-label>
-                <mat-select formControlName="claims" multiple>
+                <mat-select formControlName="claims" multiple [compareWith]="compareClaims">
                     <mat-option *ngFor="let claim of allClaims" [value]="claim">
                         {{ claim.name }}
                     </mat-option>
                 </mat-select>
 
-                <p>Selected Claims:</p>
+                <!-- debug purposes list -->
+                <!-- <p>Selected Claims:</p>
                 <ul>
                     <li *ngFor="let claim of form.controls.claims.value">                        
                         {{ claim.name }} -
                         {{ claim.description }}
                     </li>
-                </ul>
+                </ul> -->
             </mat-form-field>
         </div>
 
