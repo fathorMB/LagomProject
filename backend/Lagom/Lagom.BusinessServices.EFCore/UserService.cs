@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure.Core;
 using Lagom.BusinessServices.EFCore.DataValidation;
 using Lagom.BusinessServices.EFCore.DataValidation.Abstracts;
 using Lagom.BusinessServices.EFCore.DataValidation.Validators;
@@ -251,7 +252,7 @@ namespace Lagom.BusinessServices.EFCore
             _db.Users.Update(userEntity);
             await _db.SaveChangesAsync();
 
-            return new UserToggleEnableResponse(await MapUser(userEntity), BusinessServiceResponseStatus.Completed, new string[] { "User enabled successfully." });
+            return new UserToggleEnableResponse(await MapUser(await _db.Users.Include(u => u.UsersClaims).FirstOrDefaultAsync(x => x.Id == userId)), BusinessServiceResponseStatus.Completed, new string[] { "User enabled successfully." });
         }
 
         public async Task<UserToggleEnableResponse> DisableUser(int userId)
@@ -269,7 +270,7 @@ namespace Lagom.BusinessServices.EFCore
             _db.Users.Update(userEntity);
             await _db.SaveChangesAsync();
 
-            return new UserToggleEnableResponse(await MapUser(userEntity), BusinessServiceResponseStatus.Completed, new string[] { "User disabled successfully." });
+            return new UserToggleEnableResponse(await MapUser(await _db.Users.Include(u => u.UsersClaims).FirstOrDefaultAsync(x => x.Id == userId)), BusinessServiceResponseStatus.Completed, new string[] { "User disabled successfully." });
         }
     }
 }
