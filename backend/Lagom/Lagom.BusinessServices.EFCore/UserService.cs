@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using Lagom.BusinessServices.EFCore.DataValidation;
+using Lagom.BusinessServices.EFCore.DataValidation.Abstracts;
+using Lagom.BusinessServices.EFCore.DataValidation.Validators;
 using Lagom.Common;
 using Lagom.Common.Helpers;
 using Lagom.Model;
@@ -98,41 +101,71 @@ namespace Lagom.BusinessServices.EFCore
             return await GetByIdInternal(id);
         }
 
+        public async Task<UpdateUserResponse> UpdateUser(UpdateUserRequest request)
+        {
+            var userEntity = await _db.Users.FindAsync(request.User.Id);
+
+            if (userEntity == null)
+                return new UpdateUserResponse(request, new UserContract(), BusinessServiceResponseStatus.Error, new string[] { "User not found." });
+
+            userEntity.UsersClaims.Clear();
+
+            if (request.User.Claims.Any())
+            {
+                userEntity.UsersClaims = new List<UsersClaims>();
+
+                foreach (var claim in request.User.Claims)
+                {
+                    userEntity.UsersClaims.Add(new UsersClaims()
+                    {
+                        ClaimId = claim.Id,
+                        UserId = userEntity.Id
+                    });
+                }
+            }
+
+            _db.Users.Update(userEntity);
+            await _db.SaveChangesAsync();
+
+            var mapUser = await MapUser(await _db.Users.Include(u => u.UsersClaims).FirstOrDefaultAsync(x => x.Username == request.User.Username));
+
+            return new UpdateUserResponse(request, mapUser, BusinessServiceResponseStatus.Completed, new string[] { $"User updated." });
+        }
+
         public async Task<CreateUserResponse> AddUser(CreateUserRequest request)
         {
-            var duplicate = await _db.Users.FirstOrDefaultAsync(x => x.Username == request.User.Username);
-
-            if (duplicate != null)
+            var userEntity = new User()
             {
-                return new CreateUserResponse(request, new UserContract(), BusinessServiceResponseStatus.Error, new string[] { $"A User with username {request.User.Username} already exists." }); ;
-            }
+                AccessKeyHash = MD5Encoder.CreateMD5(request.Password),
+                Username = request.User.Username,
+                FirstName = request.User.FirstName,
+                LastName = request.User.LastName,
+                IsActive = request.User.IsActive
+            };
+
+            var userValidator = new UserValidator();
+            var userValidationResult = await userValidator.Validate(DataValidationContext.EntityCreation, userEntity, _db);
+
+            if (userValidationResult.Status != LagomDBDataValidatorResultStatus.Success)
+                return new CreateUserResponse(request, new UserContract(), BusinessServiceResponseStatus.Error, new string[] { userValidationResult.ValidationMessage });
 
             try
             {
-                var user = new User()
-                {
-                    AccessKeyHash = MD5Encoder.CreateMD5(request.Password),
-                    FirstName = request.User.FirstName,
-                    LastName = request.User.LastName,
-                    Username = request.User.Username,
-                    IsActive = true
-                };
-
                 if (request.User.Claims.Any())
                 {
-                    user.UsersClaims = new List<UsersClaims>();
+                    userEntity.UsersClaims = new List<UsersClaims>();
 
                     foreach (var claim in request.User.Claims)
                     {
-                        user.UsersClaims.Add(new UsersClaims()
+                        userEntity.UsersClaims.Add(new UsersClaims()
                         {
                             ClaimId = claim.Id,
-                            UserId = user.Id
+                            UserId = userEntity.Id
                         });
                     }
                 }
 
-                await _db.Users.AddAsync(user);
+                await _db.Users.AddAsync(userEntity);
                 await _db.SaveChangesAsync();
 
                 var mapUser = await MapUser(await _db.Users.Include(u => u.UsersClaims).FirstOrDefaultAsync(x => x.Username == request.User.Username));

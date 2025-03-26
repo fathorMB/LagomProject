@@ -8,6 +8,7 @@ namespace Lagom.BusinessServices
     {
         Task<AuthenticateResponse> Authenticate(AuthenticateRequest request);
         Task<CreateUserResponse> AddUser(CreateUserRequest request);
+        Task<UpdateUserResponse> UpdateUser(UpdateUserRequest request);
         Task<BusinessServiceResponse> DeleteUser(int userId);
         Task<BusinessServiceResponse> ChangePassword(ChangePasswordRequest request);
 

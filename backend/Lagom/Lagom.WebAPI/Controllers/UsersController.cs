@@ -72,6 +72,17 @@ namespace Lagom.WebAPI.Controllers
             return Ok(await _userService.AddUser(request));
         }
 
+        [HttpPut]
+        [Authorize(1)]
+        [ProducesResponseType<UpdateUserResponse>(200)]
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserRequest request)
+        {
+            if (request == null)
+                return BadRequest();
+
+            return Ok(await _userService.UpdateUser(request));
+        }
+
         [HttpGet("claims")]
         [Authorize(1)]
         public async Task<IActionResult> GetAllClaims()
