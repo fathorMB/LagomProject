@@ -50,9 +50,9 @@ namespace Lagom.WebAPI.Controllers
 
         [HttpDelete]
         [Authorize(1)]
-        public async Task<IActionResult> DeleteUser(int userId)
+        public async Task<IActionResult> DeleteUser(int id)
         {
-            var response = await _userService.DeleteUser(userId);
+            var response = await _userService.DeleteUser(id);
 
             if (response.BusinessServiceStatus == BusinessServiceResponseStatus.Error)
             {
