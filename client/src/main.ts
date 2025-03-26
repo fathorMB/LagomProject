@@ -1,9 +1,16 @@
-import { AppComponent } from './app/app.component';
 import { bootstrapApplication } from '@angular/platform-browser';
+import { AppComponent } from './app/app.component';
 import { appConfig } from './app/app.config';
+import { registerLocaleData } from '@angular/common';
+import localeIt from '@angular/common/locales/it';
+import { LOCALE_ID } from '@angular/core';
 
 //Trigger FE pipeline20
+registerLocaleData(localeIt)
 
-bootstrapApplication(AppComponent, appConfig).catch((err) =>
-  console.error(err)
-);
+bootstrapApplication(AppComponent, {
+  providers: [
+    ...appConfig.providers, 
+    { provide: LOCALE_ID, useValue: 'it' }  // Set Italian locale
+  ]
+});

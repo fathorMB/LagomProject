@@ -12,8 +12,8 @@ using SGBackend.Data;
 namespace Lagom.Data.Migrations
 {
     [DbContext(typeof(LagomDbContext))]
-    [Migration("20250307221224_InitialSchema")]
-    partial class InitialSchema
+    [Migration("20250328202423_v1Schema")]
+    partial class v1Schema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -169,7 +169,7 @@ namespace Lagom.Data.Migrations
                         new
                         {
                             Id = 1,
-                            AccessKeyHash = "21232f297a57a5a743894a0e4a801fc3",
+                            AccessKeyHash = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
                             FirstName = "System",
                             IsActive = true,
                             LastName = "Admin",
@@ -178,7 +178,7 @@ namespace Lagom.Data.Migrations
                         new
                         {
                             Id = 2,
-                            AccessKeyHash = "21232f297a57a5a743894a0e4a801fc3",
+                            AccessKeyHash = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
                             FirstName = "Moreno",
                             IsActive = true,
                             LastName = "Bruschi",
