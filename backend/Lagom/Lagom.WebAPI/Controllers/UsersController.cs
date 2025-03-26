@@ -71,5 +71,12 @@ namespace Lagom.WebAPI.Controllers
 
             return Ok(await _userService.AddUser(request));
         }
+
+        [HttpGet("claims")]
+        [Authorize(1)]
+        public async Task<IActionResult> GetAllClaims()
+        {
+            return Ok(await _userService.GetAllClaims());
+        }
     }
 }

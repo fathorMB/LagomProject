@@ -11,6 +11,7 @@ namespace Lagom.BusinessServices
         Task<BusinessServiceResponse> DeleteUser(int userId);
         Task<BusinessServiceResponse> ChangePassword(ChangePasswordRequest request);
 
+        Task<IEnumerable<ClaimContract>> GetAllClaims();
         Task<IEnumerable<UserContract>> GetAll();
         Task<UserContract> GetById(int id);
     }

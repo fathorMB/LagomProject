@@ -13,6 +13,7 @@ using SGBackend.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Claim = Lagom.Model.Claim;
 
 namespace Lagom.BusinessServices.EFCore
 {
@@ -107,20 +108,35 @@ namespace Lagom.BusinessServices.EFCore
 
             try
             {
-                await _db.Users.AddAsync(new User()
+                var user = new User()
                 {
                     AccessKeyHash = MD5Encoder.CreateMD5(request.Password),
                     FirstName = request.User.FirstName,
                     LastName = request.User.LastName,
                     Username = request.User.Username,
                     IsActive = true
-                });
+                };
 
-                //TODO: add also the claims to the UsersClaims table, now the user created has no claims
+                if (request.User.Claims.Any())
+                {
+                    user.UsersClaims = new List<UsersClaims>();
 
+                    foreach (var claim in request.User.Claims)
+                    {
+                        user.UsersClaims.Add(new UsersClaims()
+                        {
+                            ClaimId = claim.Id,
+                            UserId = user.Id
+                        });
+                    }
+                }
+
+                await _db.Users.AddAsync(user);
                 await _db.SaveChangesAsync();
 
-                return new CreateUserResponse(request, _mapper.Map<UserContract>(await _db.Users.FirstOrDefaultAsync(x => x.Username == request.User.Username)), BusinessServiceResponseStatus.Completed, new string[] { $"A User with username {request.User.Username} has been created." });
+                var mapUser = MapUser(await _db.Users.Include(u => u.UsersClaims).FirstOrDefaultAsync(x => x.Username == request.User.Username));
+
+                return new CreateUserResponse(request, mapUser, BusinessServiceResponseStatus.Completed, new string[] { $"A User with username {request.User.Username} has been created." });
             }
             catch (Exception ex)
             {
@@ -167,6 +183,22 @@ namespace Lagom.BusinessServices.EFCore
             }
 
             return null;
+        }
+
+        private UserContract MapUser(User user)
+        {
+            var userContract = _mapper.Map<UserContract>(user);
+            userContract.Claims = new List<ClaimContract>();
+            foreach (var claim in user.UsersClaims)
+            {
+                userContract.Claims.Add(_mapper.Map<ClaimContract>(claim.Claim));
+            }
+            return userContract;
+        }
+
+        public async Task<IEnumerable<ClaimContract>> GetAllClaims()
+        {
+            return _mapper.Map<IEnumerable<ClaimContract>>(await _db.Claims.ToListAsync());
         }
     }
 }
