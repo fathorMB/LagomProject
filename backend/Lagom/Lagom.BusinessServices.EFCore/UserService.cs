@@ -13,6 +13,7 @@ using SGBackend.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 using Claim = Lagom.Model.Claim;
 
 namespace Lagom.BusinessServices.EFCore
@@ -134,7 +135,7 @@ namespace Lagom.BusinessServices.EFCore
                 await _db.Users.AddAsync(user);
                 await _db.SaveChangesAsync();
 
-                var mapUser = MapUser(await _db.Users.Include(u => u.UsersClaims).FirstOrDefaultAsync(x => x.Username == request.User.Username));
+                var mapUser = await MapUser(await _db.Users.Include(u => u.UsersClaims).FirstOrDefaultAsync(x => x.Username == request.User.Username));
 
                 return new CreateUserResponse(request, mapUser, BusinessServiceResponseStatus.Completed, new string[] { $"A User with username {request.User.Username} has been created." });
             }
@@ -185,13 +186,14 @@ namespace Lagom.BusinessServices.EFCore
             return null;
         }
 
-        private UserContract MapUser(User user)
+        private async Task<UserContract> MapUser(User user)
         {
             var userContract = _mapper.Map<UserContract>(user);
             userContract.Claims = new List<ClaimContract>();
             foreach (var claim in user.UsersClaims)
             {
-                userContract.Claims.Add(_mapper.Map<ClaimContract>(claim.Claim));
+                var dbClaim = await _db.Claims.FindAsync(claim.ClaimId);
+                userContract.Claims.Add(_mapper.Map<ClaimContract>(dbClaim));
             }
             return userContract;
         }
