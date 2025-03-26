@@ -89,5 +89,27 @@ namespace Lagom.WebAPI.Controllers
         {
             return Ok(await _userService.GetAllClaims());
         }
+
+        [HttpGet("enable")]
+        [Authorize(1)]
+        [ProducesResponseType<UserToggleEnableResponse>(200)]
+        public async Task<IActionResult> EnableUser(int id)
+        {
+            if (id == default)
+                return BadRequest();
+
+            return Ok(await _userService.EnableUser(id));
+        }
+
+        [HttpGet("disable")]
+        [Authorize(1)]
+        [ProducesResponseType<UserToggleEnableResponse>(200)]
+        public async Task<IActionResult> DisableUser(int id)
+        {
+            if (id == default)
+                return BadRequest();
+
+            return Ok(await _userService.DisableUser(id));
+        }
     }
 }

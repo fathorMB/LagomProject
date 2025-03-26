@@ -235,5 +235,41 @@ namespace Lagom.BusinessServices.EFCore
         {
             return _mapper.Map<IEnumerable<ClaimContract>>(await _db.Claims.ToListAsync());
         }
+
+        public async Task<UserToggleEnableResponse> EnableUser(int userId)
+        {
+            var userEntity = await _db.Users.FindAsync(userId);
+
+            if (userEntity == null)
+                return new UserToggleEnableResponse(new UserContract(), BusinessServiceResponseStatus.Error, new string[] { "User not found." });
+
+            if (userEntity.IsActive)
+                return new UserToggleEnableResponse(await MapUser(userEntity), BusinessServiceResponseStatus.Error, new string[] { "User is already enabled." });
+
+            userEntity.IsActive = true;
+
+            _db.Users.Update(userEntity);
+            await _db.SaveChangesAsync();
+
+            return new UserToggleEnableResponse(await MapUser(userEntity), BusinessServiceResponseStatus.Completed, new string[] { "User enabled successfully." });
+        }
+
+        public async Task<UserToggleEnableResponse> DisableUser(int userId)
+        {
+            var userEntity = await _db.Users.FindAsync(userId);
+
+            if (userEntity == null)
+                return new UserToggleEnableResponse(new UserContract(), BusinessServiceResponseStatus.Error, new string[] { "User not found." });
+
+            if (!userEntity.IsActive)
+                return new UserToggleEnableResponse(await MapUser(userEntity), BusinessServiceResponseStatus.Error, new string[] { "User is already disabled." });
+
+            userEntity.IsActive = false;
+
+            _db.Users.Update(userEntity);
+            await _db.SaveChangesAsync();
+
+            return new UserToggleEnableResponse(await MapUser(userEntity), BusinessServiceResponseStatus.Completed, new string[] { "User disabled successfully." });
+        }
     }
 }
