@@ -54,7 +54,7 @@ export class ChangePasswordComponent {
   }
 
   save() {
-    const newPassword = this.form.value;
+    const newPassword = this.form.value.newPassword;
     this.dialogRef.close(newPassword);
   }
 }

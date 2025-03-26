@@ -115,7 +115,7 @@ namespace Lagom.BusinessServices.EFCore
                     FirstName = request.User.FirstName,
                     LastName = request.User.LastName,
                     Username = request.User.Username,
-                    IsActive = true
+                    IsActive = request.User.IsActive
                 };
 
                 if (request.User.Claims.Any())
