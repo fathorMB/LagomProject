@@ -158,12 +158,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
           this.usersService
             .updateUser(user)
             .subscribe((updateUserResponse: UpdateUserResponse) => {
-              // Find and update the user in the array
-              const index = this.users.findIndex(u => u.id === updateUserResponse.user.id);
-              if (index !== -1) {
-                this.users[index] = updateUserResponse.user;
-                this.dataSource.data = [...this.users]; // Refresh the dataSource
-              }              
+              this.updateUserAndRefresh(updateUserResponse.user);     
             });
         }
       });
@@ -196,22 +191,21 @@ export class UsersComponent implements OnInit, AfterViewInit {
   toggleActive(user: User) {
     if(user.isActive) {
       this.usersService.disableUser(user.id).subscribe((userToggleEnableResponse: UserToggleEnableResponse) => {
-        // Find and update the user in the array
-        const index = this.users.findIndex(u => u.id === userToggleEnableResponse.user.id);
-        if (index !== -1) {
-          this.users[index] = userToggleEnableResponse.user;
-          this.dataSource.data = [...this.users]; // Refresh the dataSource
-        }      
+        this.updateUserAndRefresh(userToggleEnableResponse.user);
       });
     } else {
       this.usersService.enableUser(user.id).subscribe((userToggleEnableResponse: UserToggleEnableResponse) => {
-        // Find and update the user in the array
-        const index = this.users.findIndex(u => u.id === userToggleEnableResponse.user.id);
-        if (index !== -1) {
-          this.users[index] = userToggleEnableResponse.user;
-          this.dataSource.data = [...this.users]; // Refresh the dataSource
-        }
+        this.updateUserAndRefresh(userToggleEnableResponse.user);
       });
+    }
+  }
+
+  private updateUserAndRefresh(user: User): void {
+    // Find and update the user in the array
+    const index = this.users.findIndex(u => u.id === user.id);
+    if (index !== -1) {
+      this.users[index] = user;
+      this.dataSource.data = [...this.users]; // Refresh the dataSource
     }
   }
 

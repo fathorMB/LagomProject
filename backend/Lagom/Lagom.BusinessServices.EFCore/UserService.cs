@@ -109,7 +109,7 @@ namespace Lagom.BusinessServices.EFCore
             if (userEntity == null)
                 return new UpdateUserResponse(request, new UserContract(), BusinessServiceResponseStatus.Error, new string[] { "User not found." });
 
-            userEntity.UsersClaims.Clear();
+            userEntity.UsersClaims?.Clear();
 
             if (request.User.Claims.Any())
             {
