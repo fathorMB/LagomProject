@@ -65,7 +65,7 @@ namespace Lagom.WebAPI.Controllers
         [HttpPost]
         [Authorize(1)]
         [ProducesResponseType<CreateUserResponse>(200)]
-        public async Task<IActionResult> Post([FromBody] CreateUserRequest request)
+        public async Task<IActionResult> AddUser([FromBody] CreateUserRequest request)
         {
             request.User.Id = 0;
 

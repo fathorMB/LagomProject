@@ -116,6 +116,8 @@ namespace Lagom.BusinessServices.EFCore
                     IsActive = true
                 });
 
+                //TODO: add also the claims to the UsersClaims table, now the user created has no claims
+
                 await _db.SaveChangesAsync();
 
                 return new CreateUserResponse(request, _mapper.Map<UserContract>(await _db.Users.FirstOrDefaultAsync(x => x.Username == request.User.Username)), BusinessServiceResponseStatus.Completed, new string[] { $"A User with username {request.User.Username} has been created." });
