@@ -104,12 +104,12 @@ namespace Lagom.BusinessServices.EFCore
 
         public async Task<UpdateUserResponse> UpdateUser(UpdateUserRequest request)
         {
-            var userEntity = await _db.Users.FindAsync(request.User.Id);
+            var userEntity = await _db.Users.Include(u => u.UsersClaims).FirstOrDefaultAsync(u => u.Id == request.User.Id);
 
             if (userEntity == null)
                 return new UpdateUserResponse(request, new UserContract(), BusinessServiceResponseStatus.Error, new string[] { "User not found." });
 
-            userEntity.UsersClaims?.Clear();
+            userEntity.UsersClaims.Clear();
 
             if (request.User.Claims.Any())
             {
