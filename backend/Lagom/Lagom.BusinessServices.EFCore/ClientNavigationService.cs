@@ -56,6 +56,12 @@ namespace Lagom.BusinessServices.EFCore
                             Label = "Contatti",
                             Icon = "mat:picture_in_picture",
                             Route = "lagom/menu/contacts"
+                        },
+                        new NavigationLink
+                        {
+                            Label = "Magazzino",
+                            Icon = "mat:store",
+                            Route = "lagom/menu/warehouse"
                         }
                     }
                 },
