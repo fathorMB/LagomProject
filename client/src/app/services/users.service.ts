@@ -3,15 +3,14 @@ import { Observable } from 'rxjs';
 import { User } from '../models/users/user.model';
 import { NetworkService } from './network.service';
 import { BusinessServiceResponse } from '../models/common/business-service-response.model';
-import { QueryStringBuilder } from '../helpers/query-string-builder';
 import { CreateUserResponse } from '../models/users/create-user-response.model';
 import { CreateUserRequest } from '../models/users/create-user-request.model';
 import { ChangePasswordRequest } from '../models/users/change-password-request.model';
 import { Claim } from '../models/users/claim.model';
-import { BusinessServiceResponseStatus } from '../models/abstracts/api-response.model';
 import { UpdateUserResponse } from '../models/users/update-user-response.model';
 import { UpdateUserRequest } from '../models/users/update-user-request.model';
 import { UserToggleEnableResponse } from '../models/users/user-toggle-enable-response.model';
+import { buildQueryString } from '../helpers/query-string-builder';
 
 @Injectable({
   providedIn: 'root'
@@ -42,7 +41,7 @@ export class UsersService {
   }
 
   deleteUser(id: number): Observable<BusinessServiceResponse> {
-    const queryString = QueryStringBuilder.build(new URLSearchParams({ id: id.toString() }));
+    const queryString = buildQueryString(new URLSearchParams({ id: id.toString() }));
     return this.networkService.delete<BusinessServiceResponse>(this.route + queryString);
   }
 
@@ -60,12 +59,12 @@ export class UsersService {
   }
 
   enableUser(id: number): Observable<UserToggleEnableResponse> {
-    const queryString = QueryStringBuilder.build(new URLSearchParams({ id: id.toString() }));
+    const queryString = buildQueryString(new URLSearchParams({ id: id.toString() }));
     return this.networkService.get<UserToggleEnableResponse>(this.route + '/enable' + queryString);
   }
 
   disableUser(id: number): Observable<UserToggleEnableResponse> {
-    const queryString = QueryStringBuilder.build(new URLSearchParams({ id: id.toString() }));
+    const queryString = buildQueryString(new URLSearchParams({ id: id.toString() }));
     return this.networkService.get<UserToggleEnableResponse>(this.route + '/disable' + queryString);
   }
 }
