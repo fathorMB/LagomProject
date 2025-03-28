@@ -35,6 +35,12 @@ jobs:
       - name: Install dependencies
         run: npm install --prefix ./client
 
+      - name: Update Environment Prod File
+        env:
+          BACKEND_URL: ${{ secrets.AZURE_WEBAPI_STAGING_URL }}
+        run: |
+          node ./client/update-environment.js
+
       - name: Build the client
         run: npm run build --prefix ./client
 
@@ -74,6 +80,12 @@ jobs:
             return await core.getIDToken()
           result-encoding: string
 
+      - name: Update Environment Prod File
+        env:
+          BACKEND_URL: ${{ secrets.AZURE_WEBAPI_STAGING_URL }}
+        run: |
+          node ./client/update-environment.js
+
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
@@ -85,3 +97,4 @@ jobs:
           output_location: "dist/vex" # Where your built site gets placed
           api_location: "" # if you don't have an API folder
           github_id_token: ${{ steps.idtoken.outputs.result }}
+

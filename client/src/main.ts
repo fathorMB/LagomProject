@@ -7,6 +7,8 @@ import { LOCALE_ID } from '@angular/core';
 
 registerLocaleData(localeIt)
 
+//Trigger FE pipeline20
+
 bootstrapApplication(AppComponent, {
   providers: [
     ...appConfig.providers, 
