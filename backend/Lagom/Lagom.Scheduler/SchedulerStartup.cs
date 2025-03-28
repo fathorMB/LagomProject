@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Lagom.Scheduler.Jobs;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Quartz;
 using Quartz.AspNetCore;
+using static Quartz.Logging.OperationName;
 
 namespace Lagom.Scheduler
 {
@@ -22,6 +24,10 @@ namespace Lagom.Scheduler
                 {
                     tp.MaxConcurrency = 5;
                 });
+
+                // Define the job and give it a unique key
+                var jobKey = new JobKey("ExampleJob");
+                q.AddJob<ExampleJob>(opts => opts.WithIdentity(jobKey).StoreDurably());
 
                 // Configure the job store
                 q.UsePersistentStore(s =>
