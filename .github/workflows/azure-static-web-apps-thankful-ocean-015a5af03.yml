@@ -91,3 +91,5 @@ jobs:
           output_location: "dist/vex" # Where your built site gets placed
           api_location: "" # if you don't have an API folder
           github_id_token: ${{ steps.idtoken.outputs.result }}
+          skip_app_build: true # Skip the build step since we already built it in the previous job
+
