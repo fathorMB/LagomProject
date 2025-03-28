@@ -1,0 +1,31 @@
+/* snackbar customizations ref. in snack-bar-manager-service.ts */
+
+/* success green-snackbar */
+.mat-mdc-snack-bar-container.green-snackbar {
+    --mdc-snackbar-container-color: #004d06;
+    --mat-mdc-snack-bar-button-color: #fff;
+    --mdc-snackbar-supporting-text-color: #fff;
+}
+.mat-mdc-snack-bar-container.red-snackbar.mat-simple-snackbar-action {
+    color: #fff;
+}
+
+/* warning yellow-snackbar */
+.mat-mdc-snack-bar-container.yellow-snackbar {
+    --mdc-snackbar-container-color: #a59a00;
+    --mat-mdc-snack-bar-button-color: #000;
+    --mdc-snackbar-supporting-text-color: #000;
+}
+.mat-mdc-snack-bar-container.yellow-snackbar.mat-simple-snackbar-action {
+    color: #000;
+}
+
+/* error red-snackbar */
+.mat-mdc-snack-bar-container.red-snackbar {
+    --mdc-snackbar-container-color: #750014;
+    --mat-mdc-snack-bar-button-color: #fff;
+    --mdc-snackbar-supporting-text-color: #fff;
+}
+.mat-mdc-snack-bar-container.red-snackbar.mat-simple-snackbar-action {
+    color: #fff;
+}
