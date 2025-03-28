@@ -1,5 +1,5 @@
-import * as fs from 'fs';
-import * as path from 'path';
+const fs = require('fs');
+const path = require('path');
 
 // Path to the production environment file (adjust the path if needed)
 const environmentProdPath = path.resolve(__dirname, 'src/environments/environment.prod.ts');
