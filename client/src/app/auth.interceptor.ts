@@ -14,6 +14,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { AuthService } from './services/auth.service';
 import { APIResponse, BusinessServiceResponseStatus } from './models/abstracts/api-response.model';
+import { SnackBarManager } from './helpers/snack-bar-manager';
 
 /**
  * A function-based HttpInterceptor that uses the Angular inject() function
@@ -45,8 +46,19 @@ export const authInterceptor: HttpInterceptorFn = (req, next): Observable<HttpEv
   
           // If it's one of your "successful" API responses and has a message
           if (body?.businessServiceMessages && body?.businessServiceStatus === BusinessServiceResponseStatus.Completed) {
-            snackBar.open(body.businessServiceMessages[0], 'Close', { duration: 4000 });
+            SnackBarManager.showSuccess(body.businessServiceMessages[0], 3, snackBar);
           }
+
+          // If it's one of your "completed with error" API responses and has a message
+          if (body?.businessServiceMessages && body?.businessServiceStatus === BusinessServiceResponseStatus.CompletedWithErrors) {
+            SnackBarManager.showWarning(body.businessServiceMessages[0], 3, snackBar);
+          }
+
+          // If it's one of your "error" API responses and has a message
+          if (body?.businessServiceMessages && body?.businessServiceStatus === BusinessServiceResponseStatus.Error) {
+            SnackBarManager.showError(body.businessServiceMessages[0], 3, snackBar);
+          }
+
         }
     }),
     
@@ -55,11 +67,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next): Observable<HttpEv
         authService.logout();
         router.navigate(['/']);
       }
-      snackBar.open(
-        error?.error?.message || 'Network error, please try again later.',
-        'Close',
-        { duration: 4000 }
-      );
+      SnackBarManager.showError(error?.error?.message || 'Network error, please try again later.', 3, snackBar);      
       return throwError(() => new Error(error.message));
     })
   );
