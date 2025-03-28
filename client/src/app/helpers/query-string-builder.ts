@@ -1,5 +1,3 @@
-export class QueryStringBuilder {
-    static build(params: URLSearchParams): string {
-        return '?' + params.toString(); 
-    }
+export function buildQueryString(params: URLSearchParams): string {
+    return '?' + params.toString();
 }

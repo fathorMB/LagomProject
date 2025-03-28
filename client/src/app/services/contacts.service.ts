@@ -7,7 +7,7 @@ import { Contact } from '../models/contacts/contact.model';
 import { CreateContactRequest } from '../models/contacts/create-contact-request.model';
 import { CreateContactResponse } from '../models/contacts/create-contact-response.model';
 import { BusinessServiceResponse } from '../models/common/business-service-response.model';
-import { QueryStringBuilder } from '../helpers/query-string-builder';
+import { buildQueryString } from '../helpers/query-string-builder';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +21,7 @@ export class ContactsService {
   }
 
   getContactById(id: number): Observable<Contact> {
-    var queryString = QueryStringBuilder.build(new URLSearchParams({ id: id.toString() }));
+    var queryString = buildQueryString(new URLSearchParams({ id: id.toString() }));
     return this.networkService.get<Contact>(this.route + queryString);
   }
 
@@ -36,7 +36,7 @@ export class ContactsService {
   }
 
   deleteContact(id: number): Observable<BusinessServiceResponse> {
-    var queryString = QueryStringBuilder.build(new URLSearchParams({ id: id.toString() }));
+    var queryString = buildQueryString(new URLSearchParams({ id: id.toString() }));
     return this.networkService.delete<BusinessServiceResponse>(this.route + queryString);
   }
 }
