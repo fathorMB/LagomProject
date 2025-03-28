@@ -52,14 +52,10 @@ namespace Lagom.WebAPI.Controllers
         [Authorize(1)]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            var response = await _userService.DeleteUser(id);
+            if (id == default)
+                return BadRequest();
 
-            if (response.BusinessServiceStatus == BusinessServiceResponseStatus.Error)
-            {
-                return BadRequest(response.BusinessServiceMessages);
-            }
-
-            return Ok(response.BusinessServiceMessages);
+            return Ok(await _userService.DeleteUser(id));
         }
 
         [HttpPost]
