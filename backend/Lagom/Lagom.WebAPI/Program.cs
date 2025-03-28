@@ -1,9 +1,14 @@
 
+using CrystalQuartz.Application;
+using CrystalQuartz.AspNetCore;
 using Lagom.Scheduler;
 using Lagom.WebAPI.AppConfiguration;
 using Lagom.WebAPI.Hubs;
 using Lagom.WebAPI.Services;
 using Lagom.WebAPI.Startup;
+using Microsoft.AspNetCore.Builder;
+using Quartz;
+using SGBackend.Data;
 
 namespace Lagom.WebAPI
 {
@@ -37,6 +42,12 @@ namespace Lagom.WebAPI
                 DevStartup.AddServices(builder);
 
             var app = builder.Build();
+
+            // Retrieve the scheduler instance from the DI container
+            var schedulerFactory = app.Services.GetRequiredService<ISchedulerFactory>();
+            var scheduler = schedulerFactory.GetScheduler().Result;
+
+            app.UseCrystalQuartz(() => scheduler);
 
             if (dbAutoMigrateEnabled)
                 DataLayerStartup.Configure(app);
