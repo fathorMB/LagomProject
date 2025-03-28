@@ -59,9 +59,9 @@ namespace Lagom.BusinessServices.EFCore
                         },
                         new NavigationLink
                         {
-                            Label = "Magazzino",
-                            Icon = "mat:warehouse",
-                            Route = "lagom/menu/warehouse"
+                            Label = "Calendario",
+                            Icon = "mat:event",
+                            Route = "lagom/menu/calendar"
                         },
                         new NavigationLink
                         {
@@ -71,9 +71,9 @@ namespace Lagom.BusinessServices.EFCore
                         },
                         new NavigationLink
                         {
-                            Label = "Calendario",
-                            Icon = "mat:event",
-                            Route = "lagom/menu/calendar"
+                            Label = "Magazzino",
+                            Icon = "mat:warehouse",
+                            Route = "lagom/menu/warehouse"
                         }
                     }
                 },
