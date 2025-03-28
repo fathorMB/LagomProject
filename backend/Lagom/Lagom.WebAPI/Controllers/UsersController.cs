@@ -31,14 +31,10 @@ namespace Lagom.WebAPI.Controllers
         [Authorize(1)]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
         {
-            var response = await _userService.ChangePassword(request);
+            if (request == null)
+                return BadRequest();
 
-            if (response.BusinessServiceStatus == BusinessServiceResponseStatus.Error)
-            {
-                return BadRequest(response.BusinessServiceMessages);
-            }
-
-            return Ok(response.BusinessServiceMessages);
+            return Ok(await _userService.ChangePassword(request));
         }
 
         [HttpGet("all")]

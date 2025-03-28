@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Lagom.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialSchema : Migration
+    public partial class v1Schema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -118,8 +118,8 @@ namespace Lagom.Data.Migrations
                 columns: new[] { "Id", "AccessKeyHash", "FirstName", "IsActive", "LastName", "Username" },
                 values: new object[,]
                 {
-                    { 1, "21232f297a57a5a743894a0e4a801fc3", "System", true, "Admin", "admin" },
-                    { 2, "21232f297a57a5a743894a0e4a801fc3", "Moreno", true, "Bruschi", "moro" }
+                    { 1, "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", "System", true, "Admin", "admin" },
+                    { 2, "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", "Moreno", true, "Bruschi", "moro" }
                 });
 
             migrationBuilder.InsertData(

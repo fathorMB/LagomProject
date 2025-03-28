@@ -16,6 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 using SGBackend.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Claim = Lagom.Model.Claim;
@@ -44,7 +45,7 @@ namespace Lagom.BusinessServices.EFCore
                 return new BusinessServiceResponse(request, BusinessServiceResponseStatus.Error, new string[] { "User not found." });
             }
 
-            user.AccessKeyHash = MD5Encoder.CreateMD5(request.NewPassword);
+            user.AccessKeyHash = HashPassword(request.NewPassword);
             await _db.SaveChangesAsync();
 
             return new BusinessServiceResponse(request, BusinessServiceResponseStatus.Completed, new string[] { "Password changed successfully." });
@@ -67,34 +68,24 @@ namespace Lagom.BusinessServices.EFCore
 
         public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest model)
         {
-            string passwordHash = MD5Encoder.CreateMD5(model.Password);
+            string passwordHash = HashPassword(model.Password);
 
             var user = await _db.Users.SingleOrDefaultAsync(x => x.Username == model.Username && x.AccessKeyHash == passwordHash);
 
-            // return null if user not found
             if (user == null) return new AuthenticateResponse(model, null, string.Empty, BusinessServiceResponseStatus.Error, new string[] { "Authentication failed." });
 
-            // authentication successful so generate jwt token
             var token = await GenerateJwtToken(user);
             var mapUser = await GetByIdInternal(user.Id);
 
             if (mapUser == null) return new AuthenticateResponse(model, null, string.Empty, BusinessServiceResponseStatus.CompletedWithErrors, new string[] { "Something went wrong. Please contact system administrator." });
 
-            return new AuthenticateResponse(model, mapUser, token, BusinessServiceResponseStatus.Completed, new string[] {"Authentication successful."});
+            return new AuthenticateResponse(model, mapUser, token, BusinessServiceResponseStatus.Completed, new string[] { "Authentication successful." });
         }
 
         public async Task<IEnumerable<UserContract>> GetAll()
         {
-            List<UserContract> result = new List<UserContract>();
-
-            var userIds = await _db.Users.Select(u => u.Id).ToListAsync();
-
-            foreach (var userId in userIds)
-            {
-                result.Add(await GetByIdInternal(userId));
-            }
-
-            return result;
+            var users = await _db.Users.Include(u => u.UsersClaims).ThenInclude(uc => uc.Claim).ToListAsync();
+            return _mapper.Map<IEnumerable<UserContract>>(users);
         }
 
         public async Task<UserContract> GetById(int id)
@@ -113,31 +104,26 @@ namespace Lagom.BusinessServices.EFCore
 
             if (request.User.Claims.Any())
             {
-                userEntity.UsersClaims = new List<UsersClaims>();
-
-                foreach (var claim in request.User.Claims)
+                userEntity.UsersClaims = request.User.Claims.Select(claim => new UsersClaims
                 {
-                    userEntity.UsersClaims.Add(new UsersClaims()
-                    {
-                        ClaimId = claim.Id,
-                        UserId = userEntity.Id
-                    });
-                }
+                    ClaimId = claim.Id,
+                    UserId = userEntity.Id
+                }).ToList();
             }
 
             _db.Users.Update(userEntity);
             await _db.SaveChangesAsync();
 
-            var mapUser = await MapUser(await _db.Users.Include(u => u.UsersClaims).FirstOrDefaultAsync(x => x.Username == request.User.Username));
+            var mapUser = await GetByIdInternal(userEntity.Id);
 
-            return new UpdateUserResponse(request, mapUser, BusinessServiceResponseStatus.Completed, new string[] { $"User updated." });
+            return new UpdateUserResponse(request, mapUser, BusinessServiceResponseStatus.Completed, new string[] { "User updated." });
         }
 
         public async Task<CreateUserResponse> AddUser(CreateUserRequest request)
         {
-            var userEntity = new User()
+            var userEntity = new User
             {
-                AccessKeyHash = MD5Encoder.CreateMD5(request.Password),
+                AccessKeyHash = HashPassword(request.Password),
                 Username = request.User.Username,
                 FirstName = request.User.FirstName,
                 LastName = request.User.LastName,
@@ -154,22 +140,17 @@ namespace Lagom.BusinessServices.EFCore
             {
                 if (request.User.Claims.Any())
                 {
-                    userEntity.UsersClaims = new List<UsersClaims>();
-
-                    foreach (var claim in request.User.Claims)
+                    userEntity.UsersClaims = request.User.Claims.Select(claim => new UsersClaims
                     {
-                        userEntity.UsersClaims.Add(new UsersClaims()
-                        {
-                            ClaimId = claim.Id,
-                            UserId = userEntity.Id
-                        });
-                    }
+                        ClaimId = claim.Id,
+                        UserId = userEntity.Id
+                    }).ToList();
                 }
 
                 await _db.Users.AddAsync(userEntity);
                 await _db.SaveChangesAsync();
 
-                var mapUser = await MapUser(await _db.Users.Include(u => u.UsersClaims).FirstOrDefaultAsync(x => x.Username == request.User.Username));
+                var mapUser = await GetByIdInternal(userEntity.Id);
 
                 return new CreateUserResponse(request, mapUser, BusinessServiceResponseStatus.Completed, new string[] { $"A User with username {request.User.Username} has been created." });
             }
@@ -178,42 +159,30 @@ namespace Lagom.BusinessServices.EFCore
                 return new CreateUserResponse(request, new UserContract(), BusinessServiceResponseStatus.Error, new string[] { "An error occurred while creating the User.", ex.Message });
             }
         }
-        // helper methods
+
         private async Task<string> GenerateJwtToken(User user)
         {
-            //Generate token that is valid for 7 days
             var tokenHandler = new JwtSecurityTokenHandler();
-            var token = await Task.Run(() =>
+            var key = Encoding.ASCII.GetBytes(_appSettings.JWTSecret);
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
-                var key = Encoding.ASCII.GetBytes(_appSettings.JWTSecret);
-                var tokenDescriptor = new SecurityTokenDescriptor
-                {
-                    Subject = new ClaimsIdentity(new[] { new System.Security.Claims.Claim("id", user.Id.ToString()) }),
-                    Expires = DateTime.UtcNow.AddMinutes(_appSettings.JWTTokenExpirationInMinutes),
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-                    Issuer = _appSettings.JWTIssuer,
-                    Audience = _appSettings.JWTAudience
-                };
-                return tokenHandler.CreateToken(tokenDescriptor);
-            });
-
+                Subject = new ClaimsIdentity(new[] { new System.Security.Claims.Claim("id", user.Id.ToString()) }),
+                Expires = DateTime.UtcNow.AddMinutes(_appSettings.JWTTokenExpirationInMinutes),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                Issuer = _appSettings.JWTIssuer,
+                Audience = _appSettings.JWTAudience
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
 
         private async Task<UserContract?> GetByIdInternal(int id)
         {
-            var dbUser = await _db.Users.Include(u => u.UsersClaims).FirstOrDefaultAsync(x => x.Id == id);
+            var dbUser = await _db.Users.Include(u => u.UsersClaims).ThenInclude(uc => uc.Claim).FirstOrDefaultAsync(x => x.Id == id);
 
             if (dbUser != null)
             {
                 var user = _mapper.Map<UserContract>(dbUser);
-
-                user.Claims = new List<ClaimContract>();
-
-                var dbUserClaims = _db.Claims.Where(c => dbUser.UsersClaims.Select(uc => uc.ClaimId).Contains(c.Id));
-
-                await dbUserClaims.ForEachAsync(uc => user.Claims.Add(_mapper.Map<ClaimContract>(uc)));
-
                 return user;
             }
 
@@ -223,12 +192,6 @@ namespace Lagom.BusinessServices.EFCore
         private async Task<UserContract> MapUser(User user)
         {
             var userContract = _mapper.Map<UserContract>(user);
-            userContract.Claims = new List<ClaimContract>();
-            foreach (var claim in user.UsersClaims)
-            {
-                var dbClaim = await _db.Claims.FindAsync(claim.ClaimId);
-                userContract.Claims.Add(_mapper.Map<ClaimContract>(dbClaim));
-            }
             return userContract;
         }
 
@@ -252,7 +215,7 @@ namespace Lagom.BusinessServices.EFCore
             _db.Users.Update(userEntity);
             await _db.SaveChangesAsync();
 
-            return new UserToggleEnableResponse(await MapUser(await _db.Users.Include(u => u.UsersClaims).FirstOrDefaultAsync(x => x.Id == userId)), BusinessServiceResponseStatus.Completed, new string[] { "User enabled successfully." });
+            return new UserToggleEnableResponse(await GetByIdInternal(userId), BusinessServiceResponseStatus.Completed, new string[] { "User enabled successfully." });
         }
 
         public async Task<UserToggleEnableResponse> DisableUser(int userId)
@@ -270,7 +233,16 @@ namespace Lagom.BusinessServices.EFCore
             _db.Users.Update(userEntity);
             await _db.SaveChangesAsync();
 
-            return new UserToggleEnableResponse(await MapUser(await _db.Users.Include(u => u.UsersClaims).FirstOrDefaultAsync(x => x.Id == userId)), BusinessServiceResponseStatus.Completed, new string[] { "User disabled successfully." });
+            return new UserToggleEnableResponse(await GetByIdInternal(userId), BusinessServiceResponseStatus.Completed, new string[] { "User disabled successfully." });
+        }
+
+        private string HashPassword(string password)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
+            }
         }
     }
 }
