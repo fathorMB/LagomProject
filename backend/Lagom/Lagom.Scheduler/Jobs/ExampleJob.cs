@@ -1,4 +1,5 @@
 ﻿using Quartz;
+using System.Diagnostics;
 
 namespace Lagom.Scheduler.Jobs
 {
@@ -6,7 +7,8 @@ namespace Lagom.Scheduler.Jobs
     {
         public Task Execute(IJobExecutionContext context)
         {
-            throw new NotImplementedException();
+            Debug.WriteLine("RUN EXAMPLE JOB");
+            return Task.CompletedTask;
         }
     }
 }
