@@ -1,7 +1,9 @@
 @import "~simplebar/dist/simplebar.css";
 @import "~highlight.js/styles/androidstudio.css";
 // Vex Core
-@import "./@vex/styles/core";
+@import "./@vex/styles/core.scss";
+// Lagom Core
+@import "app/styles/core.css";
 
 /*
   You can override any CSS Variable or style here
@@ -27,33 +29,4 @@ html {
 
   // --vex-color-warn: yellow;
   // --vex-color-warn-contrast: black;
-}
-
-/* Snack Bar customizations, ref. in SnackBarManager */
-.mat-mdc-snack-bar-container.green-snackbar {  
-  --mdc-snackbar-container-color: #750014;
-  --mdc-snackbar-container-color: #004d06;
-  --mat-mdc-snack-bar-button-color: #fff;
-  --mdc-snackbar-supporting-text-color: #fff;  
-}
-.mat-mdc-snack-bar-container.red-snackbar.mat-simple-snackbar-action {
-  color: #fff;
-}
-
-.mat-mdc-snack-bar-container.yellow-snackbar {
-  --mdc-snackbar-container-color: #a59a00;  
-  --mat-mdc-snack-bar-button-color: #000;
-  --mdc-snackbar-supporting-text-color: #000;  
-}
-.mat-mdc-snack-bar-container.yellow-snackbar.mat-simple-snackbar-action {
-  color: #000;
-}
-
-.mat-mdc-snack-bar-container.red-snackbar {
-  --mdc-snackbar-container-color: #750014;  
-  --mat-mdc-snack-bar-button-color: #fff;
-  --mdc-snackbar-supporting-text-color: #fff;  
-}
-.mat-mdc-snack-bar-container.red-snackbar.mat-simple-snackbar-action {
-  color: #fff;
 }
