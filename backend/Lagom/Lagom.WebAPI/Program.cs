@@ -43,14 +43,10 @@ namespace Lagom.WebAPI
 
             var app = builder.Build();
 
-            // Retrieve the scheduler instance from the DI container
-            var schedulerFactory = app.Services.GetRequiredService<ISchedulerFactory>();
-            var scheduler = schedulerFactory.GetScheduler().Result;
-
-            app.UseCrystalQuartz(() => scheduler);
-
             if (dbAutoMigrateEnabled)
                 DataLayerStartup.Configure(app);
+
+            SchedulerWithUIStartup.Configure(app);
 
             // Configure the HTTP request pipeline.
             AuthenticationAppConfiguration.Configure(app);
