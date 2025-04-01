@@ -10,5 +10,6 @@
         public string WebSocketProbeAPIVersion { get; set; } = string.Empty;
         public int DateTimeProviderHoursOffset { get; set; }
         public string AzureBlobContainerName { get; set; } = string.Empty;
+        public string ClientURLOrigin { get; set; } = string.Empty;
     }
 }
