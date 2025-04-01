@@ -15,7 +15,8 @@ namespace Lagom.WebAPI.Startup
                     options.AddPolicy("AllowSpecificOrigin",
                         builder => builder.WithOrigins(clientURLOrigin)
                                           .AllowAnyHeader()
-                                          .AllowAnyMethod());
+                                          .AllowAnyMethod()
+                                          .AllowCredentials());
                 else
                     throw new Exception("ClientURLOrigin is not set in appsettings.json");
             });
