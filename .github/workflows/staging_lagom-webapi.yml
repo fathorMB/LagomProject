@@ -84,7 +84,7 @@ jobs:
           az webapp config appsettings set \
             --name ${{ secrets.AZURE_WEBAPP_NAME }} \
             --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
-            --settings ConnectionStrings__LagomDBConnectionString="${{ secrets.LAGOM_DB_CONNECTION_STRING }}" ConnectionStrings__SeqEndpoint="${{ secrets.SEQ_ENDPOINT }}" AppSettings__DateTimeProviderHoursOffset=1
+            --settings ConnectionStrings__LagomDBConnectionString="${{ secrets.LAGOM_DB_CONNECTION_STRING }}" ConnectionStrings__SeqEndpoint="${{ secrets.SEQ_ENDPOINT }}" AppSettings__ClientURLOrigin="${{ secrets.STAGING_CLIENT_URL }}" AppSettings__DateTimeProviderHoursOffset=2
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
