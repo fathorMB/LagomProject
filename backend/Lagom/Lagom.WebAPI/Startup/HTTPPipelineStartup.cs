@@ -1,14 +1,14 @@
-﻿namespace Lagom.WebAPI.Startup
+﻿using Lagom.Common;
+
+namespace Lagom.WebAPI.Startup
 {
     public static class HTTPPipelineStartup
     {
-        public static void AddServices(WebApplicationBuilder webApplicationBuilder)
+        public static void AddServices(WebApplicationBuilder webApplicationBuilder, string clientURLOrigin)
         {
             webApplicationBuilder.Services.AddControllers();
 
             // Add CORS services
-            string clientURLOrigin = webApplicationBuilder.Configuration["ClientURLOrigin"];
-
             webApplicationBuilder.Services.AddCors(options =>
             {
                 if (!string.IsNullOrEmpty(clientURLOrigin))

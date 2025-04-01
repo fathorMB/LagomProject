@@ -31,7 +31,7 @@ namespace Lagom.WebAPI
             if (isDevelopment)
                 HTTPPipelineStartup.AddDevelopmentServices(builder);
             else
-                HTTPPipelineStartup.AddServices(builder);
+                HTTPPipelineStartup.AddServices(builder, builder.Configuration["ClientURLOrigin"]);
 
             // Trigger BE pipeline 6
             // Add SignalR services and the background hosted service
