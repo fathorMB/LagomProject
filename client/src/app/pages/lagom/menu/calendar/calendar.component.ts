@@ -1,5 +1,6 @@
 import {
   Component,
+  inject,
   OnInit,
   TemplateRef,
   ViewChild,
@@ -25,13 +26,12 @@ import {
 import {
   endOfDay,
   isSameDay,
-  isSameMonth,
-  startOfDay
+  isSameMonth
 } from 'date-fns';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { CalendarEditComponent } from './calendar-edit/calendar-edit.component';
-import { NgSwitch, NgSwitchCase } from '@angular/common';
+import { CommonModule, NgSwitch, NgSwitchCase } from '@angular/common';
 import { VexScrollbarComponent } from '@vex/components/vex-scrollbar/vex-scrollbar.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -53,6 +53,7 @@ import { CalendarHelper } from './calendar-helper';
   standalone: true,
   imports: [
     MatButtonModule,
+    CommonModule,
     CalendarCommonModule,
     MatIconModule,
     VexScrollbarComponent,
@@ -79,112 +80,154 @@ import { CalendarHelper } from './calendar-helper';
   ]
 })
 export class CalendarComponent implements OnInit {
+  private readonly dialog: MatDialog = inject(MatDialog);
+  private readonly lagomEventsService: LagomEventsService = inject(LagomEventsService);
+  private readonly snackBarManager: SnackBarManagerService = inject(SnackBarManagerService);
+
   @ViewChild('modalContent', { static: true }) modalContent?: TemplateRef<any>;
 
   view: CalendarView = CalendarView.Month;
-
   CalendarView = CalendarView;
-
   viewDate: Date = new Date();
-
   refresh: Subject<any> = new Subject();
   actions: CalendarEventAction[] = [
     {
-      label: '<i class="fa fa-fw fa-pencil"></i>',
+      label: '<span class="material-icons text-primary-600">edit</span> ',
       onClick: ({ event }: { event: CalendarEvent }): void => {
         this.handleEvent('Edited', event);
       }
     },
     {
-      label: '<i class="fa fa-fw fa-times"></i>',
+      label: '<span class="material-icons text-primary-600">groups</span> ',
       onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.events = this.events.filter((iEvent) => iEvent !== event);
-        this.handleEvent('Deleted', event);
+        this.handleEvent('Contacts', event);
+      }
+    },
+    {
+      label: '<span class="material-icons text-primary-600">content_paste_search</span> ',
+      onClick: ({ event }: { event: CalendarEvent }): void => {
+        this.handleEvent('BillOfMaterials', event);
+      }
+    },    
+    {
+      label: '<span class="material-icons text-primary-600">delete</span> ',
+      onClick: ({ event }: { event: CalendarEvent }): void => {        
+        this.handleEvent('Deleted', event);        
       }
     }
   ];
   events: CalendarEvent[] = [];
-  activeDayIsOpen = true;
-
-  constructor(
-    private dialog: MatDialog,
-    private lagomEventsService: LagomEventsService,
-    private snackBarManager: SnackBarManagerService
-  ) {}
+  activeDayIsOpen = false;                                
 
   ngOnInit(): void {
     this.refreshCalendarEvents();
   }
 
-  refreshCalendarEvents(): void {
-    this.lagomEventsService.getLagomEvents().subscribe((lagomEvents) => {
-      this.events = lagomEvents.map((lagomEvent) => CalendarHelper.mapLagomToCalendarEvent(lagomEvent));
-      this.refresh.next(null);
-    });
-  }
+  setView(view: CalendarView) { this.view = view; }
+  closeOpenMonthViewDay() { this.activeDayIsOpen = false; }    
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
-      this.activeDayIsOpen = !(
-        (isSameDay(this.viewDate, date) && this.activeDayIsOpen) ||
-        events.length === 0
-      );
+      this.activeDayIsOpen = !((isSameDay(this.viewDate, date) && this.activeDayIsOpen) || events.length === 0);
       this.viewDate = date;
+    }
+    
+    // If no events are present, open the dialog to create a new event
+    if (events.length === 0) {
+      this.openCreateEventDialog(date);
     }
   }
 
-  eventTimesChanged({
-    event,
-    newStart,
-    newEnd
-  }: CalendarEventTimesChangedEvent): void {
-    this.events = this.events.map((iEvent) => {
-      if (iEvent === event) {
-        return {
-          ...event,
-          start: newStart,
-          end: newEnd
-        };
-      }
-      return iEvent;
-    });
-    this.handleEvent('Dropped or resized', event);
+  eventTimesChanged({ event, newStart, newEnd }: CalendarEventTimesChangedEvent): void {    
+    const oldStart = event.start;
+    const oldEnd = event.end;    
+    event.start = newStart;
+    event.end = newEnd;
+    this.dialog.open(CalendarEditComponent, { data: event })
+          .afterClosed()
+          .subscribe((updatedEvent) => {
+            if (updatedEvent) {
+              CalendarHelper.updateMetaLagomEventFromCalendarEvent(updatedEvent);   // important to reflect changes from calendar event to lagom event as property of calendar-event.meta
+              this.updateEvent(updatedEvent);
+              
+              if (isSameMonth(updatedEvent.start, this.viewDate)) {
+                this.activeDayIsOpen = !((isSameDay(this.viewDate, updatedEvent.start) && this.activeDayIsOpen));
+                this.viewDate = updatedEvent.start;
+              }
+            } else {
+              // If the user cancels the dialog, revert the changes to the event's start and end times
+              event.start = oldStart;
+              event.end = oldEnd;          
+            }
+          });
   }
+
+  openCreateEventDialog(date: Date): void {
+    // Open a dialog to create a new event
+    this.dialog.open(CalendarEditComponent, { data: { title: 'Nuovo Evento...', start: date, end: date } })
+      .afterClosed()
+      .subscribe((newEvent) => {        
+          if (newEvent) {
+          this.addEvent(newEvent);            
+          this.activeDayIsOpen = !(isSameDay(this.viewDate, newEvent.start) && this.activeDayIsOpen);
+          this.viewDate = newEvent.start;
+        }
+    });
+  }  
 
   handleEvent(action: string, event: CalendarEvent): void {
-    const dialogRef = this.dialog.open(CalendarEditComponent, {
-      data: event
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        event = result;
-        this.snackBarManager.show('Updated Event: ' + event.title);
-        this.refresh.next(null);
-      }
-    });
+    switch(action) {
+      case 'Clicked':
+      case 'Edited':     
+        this.dialog.open(CalendarEditComponent, { data: event })
+          .afterClosed()
+          .subscribe((updatedEvent) => {
+            if (updatedEvent) {
+              CalendarHelper.updateMetaLagomEventFromCalendarEvent(updatedEvent);   // important to reflect changes from calendar event to lagom event as property of calendar-event.meta
+              this.updateEvent(updatedEvent);
+              
+              if (isSameMonth(updatedEvent.start, this.viewDate)) {
+                this.activeDayIsOpen = !((isSameDay(this.viewDate, updatedEvent.start) && this.activeDayIsOpen));
+                this.viewDate = updatedEvent.start;
+              }
+            }            
+          });
+        break;
+      case 'Deleted':
+        this.deleteEvent(event);
+        break;
+      case 'Contacts':
+        // Handle contacts action
+        this.snackBarManager.show('Contacts action triggered! ' + event.meta.name);
+        break;
+      case 'BillOfMaterials':
+        // Handle bill of materials action
+        this.snackBarManager.show('Bill of Materials action triggered! ' + event.meta.name);
+        break;
+      default: break;     
+    }
   }
-
-  addEvent(): void {
-    const newEvent: LagomEvent = {
-      id: Date.now(),
-      name: 'New Event',
+    
+  addEvent(newCalendarEvent: CalendarEvent): void {
+    newCalendarEvent.id = CalendarHelper.getNextId(); // Assign a temporary ID from the mock data
+    newCalendarEvent.meta = {
+      id: newCalendarEvent.id, // Assign the ID to the meta property
+      name: newCalendarEvent.title || 'New Event',
       location: 'Default',
-      start: startOfDay(new Date()),
-      end: endOfDay(new Date())
-    };
+      start: newCalendarEvent.start,
+      end: newCalendarEvent.end || endOfDay(newCalendarEvent.start),
+      contacts: [], // Placeholder for contacts
+      billOfMaterials: [] // Placeholder for bill of materials
+    } as LagomEvent;            
 
-    this.lagomEventsService.addLagomEvent(newEvent).subscribe((response) => {
-      if (
-        response.businessServiceStatus ===
-        BusinessServiceResponseStatus.Completed
-      ) {
+    this.lagomEventsService
+      .addLagomEvent(newCalendarEvent.meta as LagomEvent)
+      .subscribe((response) => {
+      if (response.businessServiceStatus ===  BusinessServiceResponseStatus.Completed) {
         this.snackBarManager.showSuccess(response.businessServiceMessages[0]);
         this.refreshCalendarEvents();
       } else {
-        this.snackBarManager.showError(
-          response.businessServiceMessages.join(', ')
-        );
+        this.snackBarManager.showError(response.businessServiceMessages.join(', '));
       }
     });
   }
@@ -194,16 +237,11 @@ export class CalendarComponent implements OnInit {
     this.lagomEventsService
       .updateLagomEvent(lagomEvent)
       .subscribe((response) => {
-        if (
-          response.businessServiceStatus ===
-          BusinessServiceResponseStatus.Completed
-        ) {
+        if (response.businessServiceStatus === BusinessServiceResponseStatus.Completed) {
           this.snackBarManager.showSuccess(response.businessServiceMessages[0]);
           this.refreshCalendarEvents();
         } else {
-          this.snackBarManager.showError(
-            response.businessServiceMessages.join(', ')
-          );
+          this.snackBarManager.showError(response.businessServiceMessages.join(', '));
         }
       });
   }
@@ -213,26 +251,19 @@ export class CalendarComponent implements OnInit {
     this.lagomEventsService
       .deleteLagomEvent(lagomEvent.id)
       .subscribe((response) => {
-        if (
-          response.businessServiceStatus ===
-          BusinessServiceResponseStatus.Completed
-        ) {
+        if (response.businessServiceStatus === BusinessServiceResponseStatus.Completed) {
           this.snackBarManager.showSuccess(response.businessServiceMessages[0]);
           this.refreshCalendarEvents();
         } else {
-          this.snackBarManager.showError(
-            response.businessServiceMessages.join(', ')
-          );
+          this.snackBarManager.showError(response.businessServiceMessages.join(', '));
         }
       });
   }
-
-  setView(view: CalendarView) {
-    this.view = view;
-  }
-
-  closeOpenMonthViewDay() {
-    this.activeDayIsOpen = false;
-  }
+  
+  private refreshCalendarEvents(): void {
+    this.lagomEventsService.getLagomEvents().subscribe((lagomEvents) => {
+      this.events = lagomEvents.map((lagomEvent) => CalendarHelper.mapLagomEventToCalendarEvent(lagomEvent, this.actions));
+      this.refresh.next(null);
+    });
+  }  
 }
-
