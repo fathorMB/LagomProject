@@ -4,12 +4,12 @@ import { VexPageLayoutComponent } from "../../../../../@vex/components/vex-page-
 import { VexBreadcrumbsComponent } from "../../../../../@vex/components/vex-breadcrumbs/vex-breadcrumbs.component";
 
 @Component({
-  selector: 'vex-events',
+  selector: 'lagom-events',
   standalone: true,
   imports: [VexPageLayoutHeaderDirective, VexPageLayoutComponent, VexBreadcrumbsComponent],
-  templateUrl: './events.component.html',
-  styleUrl: './events.component.scss'
+  templateUrl: './lagom-events.component.html',
+  styleUrl: './lagom-events.component.scss'
 })
-export class EventsComponent {
+export class LagomEventsComponent {
 
 }
