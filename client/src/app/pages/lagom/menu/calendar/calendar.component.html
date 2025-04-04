@@ -4,7 +4,7 @@
     </vex-page-layout-header>
 
     <div class="h-full flex flex-col">
-            <div class="calendar-bg relative text-white flex-none">
+            <div class="calendar-bg relative text-black flex-none">
                 <div class="bg-black opacity-25 absolute top-0 left-0 right-0 bottom-0 z-0 w-full h-full"></div>
                 <div class="w-full py-4 px-6 h-40 z-10 relative flex items-end">
                     <div class="flex-auto flex flex-col lg:flex-row sm:flex-col justify-between items-center">
@@ -30,21 +30,25 @@
                     </div>
                 </div>
             </div>
-        
+
             <vex-scrollbar [ngSwitch]="view" class="px-0 shadow flex-auto relative w-full">
-                <mwl-calendar-month-view (dayClicked)="dayClicked($event.day)"
-                    (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)"
+                <mwl-calendar-month-view 
+                    (dayClicked)="dayClicked($event.day)"
+                    (eventClicked)="handleEvent('Clicked', $event.event)" 
+                    (eventTimesChanged)="eventTimesChanged($event)"
                     *ngSwitchCase="'month'" [activeDayIsOpen]="activeDayIsOpen" [events]="events" [refresh]="refresh"
                     [viewDate]="viewDate">
                 </mwl-calendar-month-view>
-                <mwl-calendar-week-view (eventClicked)="handleEvent('Clicked', $event.event)"
+                <mwl-calendar-week-view 
+                    (eventClicked)="handleEvent('Clicked', $event.event)"
                     (eventTimesChanged)="eventTimesChanged($event)" *ngSwitchCase="'week'" [events]="events" [refresh]="refresh"
                     [viewDate]="viewDate">
                 </mwl-calendar-week-view>
-                <mwl-calendar-day-view (eventClicked)="handleEvent('Clicked', $event.event)"
+                <mwl-calendar-day-view 
+                    (eventClicked)="handleEvent('Clicked', $event.event)"
                     (eventTimesChanged)="eventTimesChanged($event)" *ngSwitchCase="'day'" [events]="events" [refresh]="refresh"
                     [viewDate]="viewDate">
-                </mwl-calendar-day-view>
+                </mwl-calendar-day-view>                
             </vex-scrollbar>
         </div>
 </vex-page-layout>

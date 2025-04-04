@@ -2,22 +2,37 @@ import { CalendarEvent, CalendarEventAction } from "angular-calendar";
 import { LagomEvent } from "src/app/models/lagom-events/lagom-event.model";
 
 export class CalendarHelper {
-    private static readonly DEFAULT_EVENT_COLOR = { primary: '#5C77FF', secondary: '#FFFFFF' }; // Default color blue
-    //private static readonly DEFAULT_EVENT_COLOR = { primary: '#F44336', secondary: '#FFFFFF' }; // Default color red
-    //private static readonly DEFAULT_EVENT_COLOR = { primary: '#FFC107', secondary: '#FDF1BA' }; // Default color yellow
+    private static IDS: number[] = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 
+                                    30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 
+                                    50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 
+                                    70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 
+                                    90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100];
+    private static ID_INDEX: number = 0;
     
-    static mapLagomToCalendarEvent(lagomEvent: LagomEvent, actions: CalendarEventAction[] = []): CalendarEvent {
+    static getNextId(): number {
+        if (this.ID_INDEX >= this.IDS.length) { throw new Error('No more IDs available'); }
+        return this.IDS[this.ID_INDEX++];
+    }
+
+    static mapLagomEventToCalendarEvent(lagomEvent: LagomEvent, actions: CalendarEventAction[] = []): CalendarEvent {
         return {
             id: lagomEvent.id,
             start: lagomEvent.start,
             end: lagomEvent.end,
             title: lagomEvent.name,
             meta: lagomEvent,
-            allDay: true, // Assume all events are all-day
-            color: this.DEFAULT_EVENT_COLOR, // Set default color
-            draggable: true, // Enable dragging for all events
-            resizable: { beforeStart: true, afterEnd: true }, // Allow resizing
-            actions: actions // Add any actions here if required
-          };            
+            allDay: true,
+            color: { primary: '#EA580C', secondary: '#EA580C' }, // Set default COLOR_ORANGE 
+            draggable: true,
+            resizable: { beforeStart: true, afterEnd: true },
+            actions: actions
+        } as CalendarEvent;
+    }
+
+    static updateMetaLagomEventFromCalendarEvent(calendarEvent: CalendarEvent): void {
+        calendarEvent.meta.id = calendarEvent.id as number;
+        calendarEvent.meta.name = calendarEvent.title || calendarEvent.meta.name;
+        calendarEvent.meta.start = calendarEvent.start;
+        calendarEvent.meta.end = calendarEvent.end;
     }
 }
