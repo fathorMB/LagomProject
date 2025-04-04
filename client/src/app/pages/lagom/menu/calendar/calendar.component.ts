@@ -1,5 +1,6 @@
 import {
   Component,
+  OnInit,
   TemplateRef,
   ViewChild,
   ViewEncapsulation
@@ -22,17 +23,13 @@ import {
   DateAdapter
 } from 'angular-calendar';
 import {
-  addDays,
-  addHours,
   endOfDay,
-  endOfMonth,
   isSameDay,
   isSameMonth,
-  startOfDay,
-  subDays
+  startOfDay
 } from 'date-fns';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { CalendarEditComponent } from './calendar-edit/calendar-edit.component';
 import { NgSwitch, NgSwitchCase } from '@angular/common';
 import { VexScrollbarComponent } from '@vex/components/vex-scrollbar/vex-scrollbar.component';
@@ -42,22 +39,11 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { VexBreadcrumbsComponent } from "../../../../../@vex/components/vex-breadcrumbs/vex-breadcrumbs.component";
 import { VexPageLayoutHeaderDirective } from "../../../../../@vex/components/vex-page-layout/vex-page-layout-header.directive";
 import { VexPageLayoutComponent } from "../../../../../@vex/components/vex-page-layout/vex-page-layout.component";
-import { VexPageLayoutContentDirective } from "../../../../../@vex/components/vex-page-layout/vex-page-layout-content.directive";
-
-const colors: any = {
-  blue: {
-    primary: '#5c77ff',
-    secondary: '#FFFFFF'
-  },
-  yellow: {
-    primary: '#ffc107',
-    secondary: '#FDF1BA'
-  },
-  red: {
-    primary: '#f44336',
-    secondary: '#FFFFFF'
-  }
-};
+import { LagomEventsService } from 'src/app/services/lagom-events.service';
+import { SnackBarManagerService } from 'src/app/services/snack-bar-manager.service';
+import { LagomEvent } from 'src/app/models/lagom-events/lagom-event.model';
+import { BusinessServiceResponseStatus } from 'src/app/models/abstracts/api-response.model';
+import { CalendarHelper } from './calendar-helper';
 
 @Component({
   selector: 'lagom-calendar',
@@ -79,9 +65,8 @@ const colors: any = {
     MatSnackBarModule,
     VexBreadcrumbsComponent,
     VexPageLayoutHeaderDirective,
-    VexPageLayoutComponent,
-    VexPageLayoutContentDirective
-],
+    VexPageLayoutComponent
+  ],
   providers: [
     {
       provide: DateAdapter,
@@ -93,7 +78,7 @@ const colors: any = {
     CalendarA11y
   ]
 })
-export class CalendarComponent {
+export class CalendarComponent implements OnInit {
   @ViewChild('modalContent', { static: true }) modalContent?: TemplateRef<any>;
 
   view: CalendarView = CalendarView.Month;
@@ -118,53 +103,25 @@ export class CalendarComponent {
       }
     }
   ];
-  events: CalendarEvent[] = [
-    {
-      start: subDays(startOfDay(new Date()), 1),
-      end: addDays(new Date(), 1),
-      title: 'A 3 day event',
-      // TODO: fix these colors
-      //color: colors.primary,
-      actions: this.actions,
-      allDay: true,
-      resizable: {
-        beforeStart: true,
-        afterEnd: true
-      },
-      draggable: true
-    },
-    {
-      start: startOfDay(new Date()),
-      title: 'An event with no end date',
-      //color: colors.yellow,
-      actions: this.actions
-    },
-    {
-      start: subDays(endOfMonth(new Date()), 3),
-      end: addDays(endOfMonth(new Date()), 3),
-      title: 'A long event that spans 2 months',
-      //color: colors.primary,
-      allDay: true
-    },
-    {
-      start: addHours(startOfDay(new Date()), 2),
-      end: new Date(),
-      title: 'A draggable and resizable event',
-      //color: colors.red,
-      actions: this.actions,
-      resizable: {
-        beforeStart: true,
-        afterEnd: true
-      },
-      draggable: true
-    }
-  ];
+  events: CalendarEvent[] = [];
   activeDayIsOpen = true;
 
   constructor(
     private dialog: MatDialog,
-    private snackbar: MatSnackBar
+    private lagomEventsService: LagomEventsService,
+    private snackBarManager: SnackBarManagerService
   ) {}
+
+  ngOnInit(): void {
+    this.refreshCalendarEvents();
+  }
+
+  refreshCalendarEvents(): void {
+    this.lagomEventsService.getLagomEvents().subscribe((lagomEvents) => {
+      this.events = lagomEvents.map((lagomEvent) => CalendarHelper.mapLagomToCalendarEvent(lagomEvent));
+      this.refresh.next(null);
+    });
+  }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
@@ -202,31 +159,72 @@ export class CalendarComponent {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         event = result;
-        this.snackbar.open('Updated Event: ' + event.title);
+        this.snackBarManager.show('Updated Event: ' + event.title);
         this.refresh.next(null);
       }
     });
   }
 
   addEvent(): void {
-    this.events = [
-      ...this.events,
-      {
-        title: 'New event',
-        start: startOfDay(new Date()),
-        end: endOfDay(new Date()),
-        color: colors.red,
-        draggable: true,
-        resizable: {
-          beforeStart: true,
-          afterEnd: true
-        }
+    const newEvent: LagomEvent = {
+      id: Date.now(),
+      name: 'New Event',
+      location: 'Default',
+      start: startOfDay(new Date()),
+      end: endOfDay(new Date())
+    };
+
+    this.lagomEventsService.addLagomEvent(newEvent).subscribe((response) => {
+      if (
+        response.businessServiceStatus ===
+        BusinessServiceResponseStatus.Completed
+      ) {
+        this.snackBarManager.showSuccess(response.businessServiceMessages[0]);
+        this.refreshCalendarEvents();
+      } else {
+        this.snackBarManager.showError(
+          response.businessServiceMessages.join(', ')
+        );
       }
-    ];
+    });
+  }
+
+  updateEvent(eventToUpdate: CalendarEvent) {
+    const lagomEvent = eventToUpdate.meta as LagomEvent;
+    this.lagomEventsService
+      .updateLagomEvent(lagomEvent)
+      .subscribe((response) => {
+        if (
+          response.businessServiceStatus ===
+          BusinessServiceResponseStatus.Completed
+        ) {
+          this.snackBarManager.showSuccess(response.businessServiceMessages[0]);
+          this.refreshCalendarEvents();
+        } else {
+          this.snackBarManager.showError(
+            response.businessServiceMessages.join(', ')
+          );
+        }
+      });
   }
 
   deleteEvent(eventToDelete: CalendarEvent) {
-    this.events = this.events.filter((event) => event !== eventToDelete);
+    const lagomEvent = eventToDelete.meta as LagomEvent;
+    this.lagomEventsService
+      .deleteLagomEvent(lagomEvent.id)
+      .subscribe((response) => {
+        if (
+          response.businessServiceStatus ===
+          BusinessServiceResponseStatus.Completed
+        ) {
+          this.snackBarManager.showSuccess(response.businessServiceMessages[0]);
+          this.refreshCalendarEvents();
+        } else {
+          this.snackBarManager.showError(
+            response.businessServiceMessages.join(', ')
+          );
+        }
+      });
   }
 
   setView(view: CalendarView) {
