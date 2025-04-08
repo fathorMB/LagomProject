@@ -103,13 +103,13 @@ export class CalendarComponent implements OnInit {
   ngOnInit(): void { this.refreshCalendarEvents(); }
 
   setView(view: CalendarView) { this.view = view; }
-  closeOpenMonthViewDay() { this.activeDayIsOpen = false; }
+  closeOpenMonthViewDay() { this.activeDayIsOpen = false; }    
 
   /* Calendar Events Handlers and Actions */
   dayClicked({ date, events }: { date: Date; events: CalendarEvent<LagomEvent>[]; }): void {
     if (events.length === 0) { this.openCalendarCreateUpdateDialog({ title: 'Nuovo Evento...', start: date, end: date }); }
     else { this.handleActiveDayEventsView(date); }
-  }
+  }  
   eventTimesChanged({ event, newStart, newEnd }: CalendarEventTimesChangedEvent): void {
     const oldStart = event.start;
     const oldEnd = event.end;
@@ -126,7 +126,7 @@ export class CalendarComponent implements OnInit {
     } 
   }
   calendarEventContactsAction(event: CalendarEvent<LagomEvent>): void { /* TODO */ this.snackBarManager.show('Contacts action triggered! ' + event.meta?.name); }
-  calendarEventBillOfMaterialsAction(event: CalendarEvent<LagomEvent>): void { /* TODO */  this.snackBarManager.show('Bill of Materials action triggered! ' + event.meta?.name); }
+  calendarEventBillOfMaterialsAction(event: CalendarEvent<LagomEvent>): void { /* TODO */  this.snackBarManager.show('Bill of Materials action triggered! ' + event.meta?.name); }  
 
   addEvent(calendarEvent: CalendarEvent<LagomEvent>): void {
     calendarEvent.id = CalendarHelper.getNextId(); // Assign mock ID
@@ -137,7 +137,7 @@ export class CalendarComponent implements OnInit {
       start: calendarEvent.start,
       end: calendarEvent.end || endOfDay(calendarEvent.start),
       contacts: [], // Placeholder for contacts
-      billOfMaterials: [] // Placeholder for bill of materials
+      billOfMaterials: ['pippo', 'pluto'] // Placeholder for bill of materials to test new events with "correct biil of materials"
     } as LagomEvent;    
 
     this.lagomEventsService.addLagomEvent(calendarEvent.meta!).subscribe((response) => {
@@ -171,7 +171,6 @@ export class CalendarComponent implements OnInit {
       .subscribe((result: CalendarEvent<LagomEvent> | undefined) => {
         if (result) {
           if(result.meta) {
-            result.meta.id = result.id as number;
             result.meta.name = result.title || result.meta.name;
             result.meta.start = result.start || result.meta.start;
             result.meta.end = result.end || result.meta.end;
@@ -207,5 +206,5 @@ export class CalendarComponent implements OnInit {
       const evEnd = ev.end || ev.start;
       return evStart <= dayEnd && evEnd >= dayStart;
     }).length;
-  }  
+  }
 }
