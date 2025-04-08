@@ -1,38 +1,70 @@
-import { CalendarEvent, CalendarEventAction } from "angular-calendar";
-import { LagomEvent } from "src/app/models/lagom-events/lagom-event.model";
+import { CalendarEvent, CalendarEventAction } from 'angular-calendar';
+import { LagomEvent } from 'src/app/models/lagom-events/lagom-event.model';
 
 export class CalendarHelper {
-    private static IDS: number[] = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 
-                                    30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 
-                                    50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 
-                                    70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 
-                                    90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100];
-    private static ID_INDEX: number = 0;
-    
-    static getNextId(): number {
-        if (this.ID_INDEX >= this.IDS.length) { throw new Error('No more IDs available'); }
-        return this.IDS[this.ID_INDEX++];
+  // To remove when API call will be implemented
+  private static ID_INDEX: number = 10;
+  static getNextId(): number { return this.ID_INDEX++; }
+  // End of to remove when API call will be implemented
+
+  static mapLagomEventToCalendarEvent(lagomEvent: LagomEvent, actions: CalendarEventAction[]): CalendarEvent<LagomEvent> {
+    const calendarEvent: CalendarEvent<LagomEvent> = {
+      id: lagomEvent.id,
+      start: lagomEvent.start,
+      end: lagomEvent.end,
+      title: lagomEvent.name,
+      meta: lagomEvent,
+      allDay: true,
+      draggable: true,
+      resizable: { beforeStart: true, afterEnd: true },
+      actions: actions
+    } as CalendarEvent<LagomEvent>;
+
+    if (this.isEventPassed(lagomEvent)) {
+      calendarEvent.color = { primary: '#9CA3AF', secondary: '#9CA3AF' }; // Set COLOR_GRAY
+      calendarEvent.actions = []; // Remove actions for passed events
+      calendarEvent.draggable = false;  // Disable dragging for passed events
+      calendarEvent.resizable = { beforeStart: false, afterEnd: false };   // Disable resizing for passed events
+      return calendarEvent;
     }
 
-    static mapLagomEventToCalendarEvent(lagomEvent: LagomEvent, actions: CalendarEventAction[] = []): CalendarEvent {
-        return {
-            id: lagomEvent.id,
-            start: lagomEvent.start,
-            end: lagomEvent.end,
-            title: lagomEvent.name,
-            meta: lagomEvent,
-            allDay: true,
-            color: { primary: '#EA580C', secondary: '#EA580C' }, // Set default COLOR_ORANGE 
-            draggable: true,
-            resizable: { beforeStart: true, afterEnd: true },
-            actions: actions
-        } as CalendarEvent;
+    if (this.isEventActive(lagomEvent)) {
+      calendarEvent.actions = []; // Remove actions for active events (except view bill of materials and view contacts in future)
+      calendarEvent.draggable = false;  // Disable dragging for active events
+      calendarEvent.resizable = { beforeStart: false, afterEnd: false };   // Disable resizing for active events    
+      if (lagomEvent.billOfMaterials && lagomEvent.billOfMaterials.length > 0) {
+        calendarEvent.color = { primary: '#059669', secondary: '#059669' }; // Set COLOR_GREEN
+        return calendarEvent;
+      } else {
+        calendarEvent.color = { primary: '#FBBF24', secondary: '#FBBF24' }; // Set COLOR_YELLOW
+        return calendarEvent;
+      }
+    } else {
+      if (lagomEvent.billOfMaterials && lagomEvent.billOfMaterials.length > 0) {
+        calendarEvent.color = { primary: '#F97316', secondary: '#F97316' }; // Set COLOR_ORANGE
+        return calendarEvent;
+      } else {
+        calendarEvent.color = { primary: '#EF4444', secondary: '#EF4444' }; // Set COLOR_RED
+        return calendarEvent;
+      }
     }
+  }
 
-    static updateMetaLagomEventFromCalendarEvent(calendarEvent: CalendarEvent): void {
-        calendarEvent.meta.id = calendarEvent.id as number;
-        calendarEvent.meta.name = calendarEvent.title || calendarEvent.meta.name;
-        calendarEvent.meta.start = calendarEvent.start;
-        calendarEvent.meta.end = calendarEvent.end;
-    }
+  private static normalizeDate(date: Date): Date {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
+  }
+  private static isDateInRange(date: Date, start: Date, end: Date): boolean {
+    return date >= start && date <= end;
+  }
+  private static isEventActive(lagomEvent: LagomEvent): boolean {
+    const today: Date = this.normalizeDate(new Date());
+    const start: Date = this.normalizeDate(new Date(lagomEvent.start));
+    const end: Date = this.normalizeDate(new Date(lagomEvent.end));
+    return this.isDateInRange(today, start, end);
+  }
+  private static isEventPassed(lagomEvent: LagomEvent): boolean {
+    const today: Date = this.normalizeDate(new Date());
+    const end: Date = this.normalizeDate(new Date(lagomEvent.end));
+    return today > end;
+  }
 }

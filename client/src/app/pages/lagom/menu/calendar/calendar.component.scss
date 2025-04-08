@@ -77,7 +77,7 @@ vex-calendar {
         flex-direction: row;
 
         .cal-event-title {
-          @apply flex-1 text-default text-sm p-3;
+          @apply flex-1 text-default text-sm p-3 no-underline cursor-default; 
         }
       }
 
@@ -165,7 +165,7 @@ vex-calendar {
       white-space: nowrap;
 
       .cal-event-title {
-        outline: none;
+        outline: none;        
       }
     }
 
