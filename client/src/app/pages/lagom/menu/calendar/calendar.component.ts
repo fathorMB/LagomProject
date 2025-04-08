@@ -33,6 +33,7 @@ import {
   DateAdapter
 } from 'angular-calendar';
 import { CalendarHelper } from './calendar-helper';
+import { ConfirmationDialogComponent } from 'src/app/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'lagom-calendar',
@@ -73,6 +74,8 @@ export class CalendarComponent implements OnInit {
   private readonly lagomEventsService: LagomEventsService = inject(LagomEventsService);
   private readonly snackBarManager: SnackBarManagerService = inject(SnackBarManagerService);
 
+  private readonly newEventDefaultTitle: string = 'Nuovo Evento';
+
   @ViewChild('modalContent', { static: true }) modalContent?: TemplateRef<any>;
 
   view: CalendarView = CalendarView.Month;
@@ -81,18 +84,22 @@ export class CalendarComponent implements OnInit {
   refresh: Subject<any> = new Subject();
   actions: CalendarEventAction[] = [
     {
+      id: CalendarHelper.ACTION_LABEL_IDS.edit,
       label: '<span class="material-icons text-primary-600">edit</span> ',
       onClick: ({ event }: { event: CalendarEvent<LagomEvent> }): void => { this.calendarEventEditAction(event); }
     },
     {
+      id: CalendarHelper.ACTION_LABEL_IDS.contacts,
       label: '<span class="material-icons text-primary-600">groups</span> ',
       onClick: ({ event }: { event: CalendarEvent<LagomEvent> }): void => { this.calendarEventContactsAction(event); }
     },
     {
+      id: CalendarHelper.ACTION_LABEL_IDS.billOfMaterials,
       label: '<span class="material-icons text-primary-600">content_paste_search</span> ',
       onClick: ({ event }: { event: CalendarEvent<LagomEvent> }): void => { this.calendarEventBillOfMaterialsAction(event); }
     },
     {
+      id: CalendarHelper.ACTION_LABEL_IDS.delete,
       label: '<span class="material-icons text-primary-600">delete</span> ',
       onClick: ({ event }: { event: CalendarEvent<LagomEvent> }): void => { this.calendarEventDeleteAction(event); }
     }
@@ -105,9 +112,8 @@ export class CalendarComponent implements OnInit {
   setView(view: CalendarView) { this.view = view; }
   closeOpenMonthViewDay() { this.activeDayIsOpen = false; }    
 
-  /* Calendar Events Handlers and Actions */
   dayClicked({ date, events }: { date: Date; events: CalendarEvent<LagomEvent>[]; }): void {
-    if (events.length === 0) { this.openCalendarCreateUpdateDialog({ title: 'Nuovo Evento...', start: date, end: date }); }
+    if (events.length === 0) { this.openCalendarCreateUpdateDialog({ title: this.newEventDefaultTitle, start: date, end: date }); }
     else { this.handleActiveDayEventsView(date); }
   }  
   eventTimesChanged({ event, newStart, newEnd }: CalendarEventTimesChangedEvent): void {
@@ -117,14 +123,10 @@ export class CalendarComponent implements OnInit {
     event.end = newEnd;    
     this.openCalendarCreateUpdateDialog(event, { start: oldStart, end: oldEnd! });        
   }
-  calendarEventAddButtonClicked(): void { this.openCalendarCreateUpdateDialog({ title: 'Nuovo Evento...', start: this.viewDate, end: this.viewDate }); }
+  calendarEventAddButtonClicked(): void { this.openCalendarCreateUpdateDialog({ title: this.newEventDefaultTitle, start: this.viewDate, end: this.viewDate }); }
   calendarEventClicked(event: CalendarEvent<LagomEvent>): void { this.openCalendarCreateUpdateDialog(event); }
   calendarEventEditAction(event: CalendarEvent<LagomEvent>): void { this.openCalendarCreateUpdateDialog(event); }
-  calendarEventDeleteAction(event: CalendarEvent<LagomEvent>): void { 
-    if (confirm('Are you sure you want to delete this event?')) { 
-      this.deleteEvent(event); 
-    } 
-  }
+  calendarEventDeleteAction(event: CalendarEvent<LagomEvent>): void { this.openDeleteConfirmationDialog(event); }
   calendarEventContactsAction(event: CalendarEvent<LagomEvent>): void { /* TODO */ this.snackBarManager.show('Contacts action triggered! ' + event.meta?.name); }
   calendarEventBillOfMaterialsAction(event: CalendarEvent<LagomEvent>): void { /* TODO */  this.snackBarManager.show('Bill of Materials action triggered! ' + event.meta?.name); }  
 
@@ -132,12 +134,12 @@ export class CalendarComponent implements OnInit {
     calendarEvent.id = CalendarHelper.getNextId(); // Assign mock ID
     calendarEvent.meta = {
       id: calendarEvent.id as number,
-      name: calendarEvent.title || 'Nuovo Evento...',
-      location: 'Default',
+      name: calendarEvent.title || this.newEventDefaultTitle,
+      location: '',
       start: calendarEvent.start,
       end: calendarEvent.end || endOfDay(calendarEvent.start),
       contacts: [], // Placeholder for contacts
-      billOfMaterials: ['pippo', 'pluto'] // Placeholder for bill of materials to test new events with "correct biil of materials"
+      billOfMaterials: ['a', 'b', 'c'] // Placeholder for bill of materials to test new events with "correct biil of materials"
     } as LagomEvent;    
 
     this.lagomEventsService.addLagomEvent(calendarEvent.meta!).subscribe((response) => {
@@ -156,11 +158,10 @@ export class CalendarComponent implements OnInit {
       });
   }
   deleteEvent(calendarEventToDelete: CalendarEvent<LagomEvent>) {
-    const startDateOfDeletedEvent = calendarEventToDelete.start;
     this.lagomEventsService.deleteLagomEvent(calendarEventToDelete.meta!.id).subscribe((response) => {
         if (response.businessServiceStatus === BusinessServiceResponseStatus.Completed) {
           this.snackBarManager.showSuccess(response.businessServiceMessages[0]);
-          this.refreshCalendarEvents(() => this.handleActiveDayEventsView(startDateOfDeletedEvent));
+          this.refreshCalendarEvents(() => this.handleActiveDayEventsView(calendarEventToDelete.start));
         } else { this.snackBarManager.showError(response.businessServiceMessages.join(', ')); }
       });
   }
@@ -185,6 +186,17 @@ export class CalendarComponent implements OnInit {
         }
       });
   }
+  private openDeleteConfirmationDialog(eventData: CalendarEvent<LagomEvent>) : void {
+    const title: string = 'Elimina Evento';
+    const message: string = `Confermi di voler eliminare l\'evento ${eventData.title} ?`;
+    this.dialog.open(ConfirmationDialogComponent, { data: { title: title, message: message } })
+      .afterClosed()
+      .subscribe((confirmationResult) => {
+        if(confirmationResult) {
+          this.deleteEvent(eventData);
+        }
+      });
+  }
   private refreshCalendarEvents(afterRefresh?: () => void): void {
     this.lagomEventsService.getLagomEvents().subscribe((lagomEvents) => {
       this.events = lagomEvents.map((lagomEvent) => CalendarHelper.mapLagomEventToCalendarEvent(lagomEvent, this.actions));
@@ -206,5 +218,5 @@ export class CalendarComponent implements OnInit {
       const evEnd = ev.end || ev.start;
       return evStart <= dayEnd && evEnd >= dayStart;
     }).length;
-  }
+  }   
 }

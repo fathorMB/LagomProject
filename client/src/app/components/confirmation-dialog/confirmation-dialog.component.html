@@ -1,0 +1,14 @@
+<div class="flex items-center" mat-dialog-title>
+    <h2 class="headline m-0 flex-auto">{{ this.data.title }}</h2>
+</div>
+
+<mat-divider class="text-border"></mat-divider>
+
+<mat-dialog-content class="flex flex-col">
+    <p>{{ this.data.message }}</p>     
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">    
+    <button (click)="this.onCancel()" mat-flat-button>Indietro</button>
+    <button (click)="this.onConfirm()" color="primary" mat-flat-button>OK</button>
+</mat-dialog-actions>
