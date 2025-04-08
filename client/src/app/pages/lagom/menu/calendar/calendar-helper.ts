@@ -7,6 +7,20 @@ export class CalendarHelper {
   static getNextId(): number { return this.ID_INDEX++; }
   // End of to remove when API call will be implemented
 
+  public static readonly ACTION_LABEL_IDS = {
+    edit: 'edit',
+    delete: 'delete',
+    contacts: 'contacts',
+    billOfMaterials: 'billOfMaterials'
+  }
+
+  private static readonly COLOR_GRAY = { primary: '#9CA3AF', secondary: '#9CA3AF' };
+  private static readonly COLOR_GREEN = { primary: '#059669', secondary: '#059669' };
+  private static readonly COLOR_YELLOW = { primary: '#FBBF24', secondary: '#FBBF24' };
+  private static readonly COLOR_ORANGE = { primary: '#F97316', secondary: '#F97316' };
+  private static readonly COLOR_RED = { primary: '#EF4444', secondary: '#EF4444' };  
+
+
   static mapLagomEventToCalendarEvent(lagomEvent: LagomEvent, actions: CalendarEventAction[]): CalendarEvent<LagomEvent> {
     const calendarEvent: CalendarEvent<LagomEvent> = {
       id: lagomEvent.id,
@@ -21,30 +35,36 @@ export class CalendarHelper {
     } as CalendarEvent<LagomEvent>;
 
     if (this.isEventPassed(lagomEvent)) {
-      calendarEvent.color = { primary: '#9CA3AF', secondary: '#9CA3AF' }; // Set COLOR_GRAY
-      calendarEvent.actions = []; // Remove actions for passed events
+      calendarEvent.color =  CalendarHelper.COLOR_GRAY
+      calendarEvent.actions = actions.filter(action => {
+        return action.id === CalendarHelper.ACTION_LABEL_IDS.contacts || 
+               action.id === CalendarHelper.ACTION_LABEL_IDS.billOfMaterials
+      });
       calendarEvent.draggable = false;  // Disable dragging for passed events
       calendarEvent.resizable = { beforeStart: false, afterEnd: false };   // Disable resizing for passed events
       return calendarEvent;
     }
 
     if (this.isEventActive(lagomEvent)) {
-      calendarEvent.actions = []; // Remove actions for active events (except view bill of materials and view contacts in future)
+      calendarEvent.actions = actions.filter(action => {
+        return action.id === CalendarHelper.ACTION_LABEL_IDS.contacts || 
+               action.id === CalendarHelper.ACTION_LABEL_IDS.billOfMaterials
+      });
       calendarEvent.draggable = false;  // Disable dragging for active events
       calendarEvent.resizable = { beforeStart: false, afterEnd: false };   // Disable resizing for active events    
       if (lagomEvent.billOfMaterials && lagomEvent.billOfMaterials.length > 0) {
-        calendarEvent.color = { primary: '#059669', secondary: '#059669' }; // Set COLOR_GREEN
+        calendarEvent.color = CalendarHelper.COLOR_GREEN;
         return calendarEvent;
       } else {
-        calendarEvent.color = { primary: '#FBBF24', secondary: '#FBBF24' }; // Set COLOR_YELLOW
+        calendarEvent.color = CalendarHelper.COLOR_YELLOW;
         return calendarEvent;
       }
     } else {
       if (lagomEvent.billOfMaterials && lagomEvent.billOfMaterials.length > 0) {
-        calendarEvent.color = { primary: '#F97316', secondary: '#F97316' }; // Set COLOR_ORANGE
+        calendarEvent.color = CalendarHelper.COLOR_ORANGE;
         return calendarEvent;
       } else {
-        calendarEvent.color = { primary: '#EF4444', secondary: '#EF4444' }; // Set COLOR_RED
+        calendarEvent.color = CalendarHelper.COLOR_RED;
         return calendarEvent;
       }
     }
