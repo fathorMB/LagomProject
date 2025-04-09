@@ -1,37 +1,43 @@
-<div class="flex items-center" mat-dialog-title>
-    <h2 class="headline m-0 flex-auto">
-        {{ event.title }}
-    </h2>
-</div>
+<form (ngSubmit)="save()" [formGroup]="form">
+    <div class="flex items-center" mat-dialog-title>
+        <h2 class="headline m-0 flex-auto">{{ event.title }}</h2>
+    </div>
 
-<mat-divider class="text-border"></mat-divider>
+    <mat-divider class="text-border"></mat-divider>
 
-<mat-dialog-content>
-    <form [formGroup]="form">
-        <div class="flex flex-col">
+    <mat-dialog-content>    
+        <div class="flex flex-col gap-y-2">                
             <mat-form-field>
-                <mat-label>Event Name</mat-label>
+                <mat-label>Nome Evento</mat-label>
                 <input formControlName="title" matInput />
+                <mat-error *ngIf="form.get('title')?.hasError('required')">Title is required</mat-error>
             </mat-form-field>
 
             <mat-form-field>
-                <mat-label>Start Date</mat-label>
-                <input [matDatepicker]="startDatepicker" formControlName="start" matInput />
+                <mat-label>Data Inizio</mat-label>
+                <input formControlName="start" [matDatepicker]="startDatepicker" [min]="minDate" [max]="maxDate" matInput />
                 <mat-datepicker-toggle [for]="startDatepicker" matIconSuffix></mat-datepicker-toggle>
                 <mat-datepicker #startDatepicker></mat-datepicker>
+                <mat-error *ngIf="form.get('start')?.hasError('required')">Start date is required</mat-error>
+                <mat-error *ngIf="form.get('start')?.hasError('matDatepickerMin')">Start must be after {{ minDate | date:'longDate' }}</mat-error>
+                <mat-error *ngIf="form.get('start')?.hasError('matDatepickerMax')">Start must be before {{ maxDate | date:'longDate' }}</mat-error>
             </mat-form-field>
 
-            <mat-form-field>
-                <mat-label>End Date</mat-label>
-                <input [matDatepicker]="endDatepicker" formControlName="end" matInput />
+            <mat-form-field class="">
+                <mat-label>Data Fine</mat-label>
+                <input formControlName="end" [matDatepicker]="endDatepicker" [min]="form.get('start')?.value || minDate" [max]="maxDate" matInput />
                 <mat-datepicker-toggle [for]="endDatepicker" matIconSuffix></mat-datepicker-toggle>
                 <mat-datepicker #endDatepicker></mat-datepicker>
+                <mat-error *ngIf="form.get('end')?.hasError('required')">End date is required</mat-error>
+                <mat-error *ngIf="form.get('end')?.hasError('matDatepickerMin')">End must be after {{ form.get('start')?.value | date:'longDate' }}</mat-error>
+                <mat-error *ngIf="form.get('end')?.hasError('matDatepickerMax')">End must be before {{ maxDate | date:'longDate' }}</mat-error>
+                <mat-error *ngIf="form.hasError('endBeforeStart')">End date must be after start date</mat-error>
             </mat-form-field>
         </div>
-    </form>
-</mat-dialog-content>
-
-<mat-dialog-actions class="flex justify-end">
-    <button mat-button mat-dialog-close>Cancel</button>
-    <button (click)="save()" class="save" color="primary" mat-flat-button>Save</button>
-</mat-dialog-actions>
+    </mat-dialog-content>
+    
+    <mat-dialog-actions class="flex justify-end">
+        <button mat-button mat-dialog-close>Indietro</button>
+        <button type="submit" color="primary" mat-flat-button [disabled]="form.invalid">Salva</button>
+    </mat-dialog-actions>
+</form>
