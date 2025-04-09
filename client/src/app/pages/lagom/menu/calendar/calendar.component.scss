@@ -1,8 +1,8 @@
 @import "../../../../../../node_modules/angular-calendar/css/angular-calendar.css";
 
 vex-calendar {
-  .calendar-bg {
-    background: url("/assets/img/demo/landscape.jpg") no-repeat center;
+  .calendar-bg {    
+    //background: url("../../../../../assets/img/demo/landscape.jpg") no-repeat center;
     background-size: cover;
   }
 }
@@ -27,16 +27,16 @@ vex-calendar {
 
   .cal-cell-row {
     &:hover {
-      background: var(--vex-background-hover);
+      background: transparent;
     }
 
     .cal-cell {
       &:hover {
-        background: var(--vex-background-hover);
+        background: rgb(var(--vex-color-primary-600) / 0.05);
       }
 
       &.cal-open {
-        background: var(--vex-background-hover);
+        background: rgb(var(--vex-color-primary-600) / 0.05);
         @apply shadow-lg;
       }
     }
@@ -46,7 +46,7 @@ vex-calendar {
     min-height: 150px;
 
     &.cal-today {
-      background: var(--vex-background-app-bar);
+      background: rgb(var(--vex-color-primary-600) / 0.1);
     }
 
     &:not(:last-child) {
@@ -77,7 +77,7 @@ vex-calendar {
         flex-direction: row;
 
         .cal-event-title {
-          @apply flex-1 text-default text-sm p-3;
+          @apply flex-1 text-default text-sm p-3 no-underline cursor-default; 
         }
       }
 
@@ -165,7 +165,7 @@ vex-calendar {
       white-space: nowrap;
 
       .cal-event-title {
-        outline: none;
+        outline: none;        
       }
     }
 

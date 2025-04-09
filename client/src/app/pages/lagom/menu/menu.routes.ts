@@ -9,7 +9,7 @@ const routes: VexRoutes = [
     loadComponent: () => import('./calendar/calendar.component').then((m) => m.CalendarComponent)
   }, {
     path: 'events',
-    loadComponent: () => import('./events/events.component').then((m) => m.EventsComponent)
+    loadComponent: () => import('./events/lagom-events.component').then((m) => m.LagomEventsComponent)
   }, {
     path: 'warehouse',
     loadComponent: () => import('./warehouse/warehouse.component').then((m) => m.WarehouseComponent)
