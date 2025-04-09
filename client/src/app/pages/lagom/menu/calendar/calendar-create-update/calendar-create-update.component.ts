@@ -1,5 +1,5 @@
 import { Component, inject, Inject, OnInit } from '@angular/core';
-import { ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
+import { AbstractControl, ReactiveFormsModule, UntypedFormBuilder, ValidatorFn, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { CalendarEvent } from 'angular-calendar';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,11 +8,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDividerModule } from '@angular/material/divider';
 import { LagomEvent } from 'src/app/models/lagom-events/lagom-event.model';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'lagom-calendar-create-update',
   standalone: true,
   imports: [
+    CommonModule,
     MatDialogModule,
     MatDividerModule,
     ReactiveFormsModule,
@@ -28,11 +30,17 @@ export class CalendarCreateUpdateComponent implements OnInit {
   private readonly fb: UntypedFormBuilder = inject(UntypedFormBuilder);
   private readonly dialogRef: MatDialogRef<CalendarCreateUpdateComponent> = inject(MatDialogRef<CalendarCreateUpdateComponent>);
   
-  form = this.fb.group({
-    title: null,
-    start: null,
-    end: null
-  });
+  minDate = new Date();   // today
+  maxDate = new Date(2125, 0, 31);
+
+  form = this.fb.group(
+    {
+      title: [null, Validators.required],
+      start: [null, Validators.required],
+      end: [null, Validators.required]
+    },
+    { validators: this.dateRangeValidator() }
+  );
   
   constructor(@Inject(MAT_DIALOG_DATA) public event: CalendarEvent<LagomEvent>) {}
 
@@ -41,9 +49,19 @@ export class CalendarCreateUpdateComponent implements OnInit {
   }
 
   save() {
-    this.dialogRef.close({
-      ...this.event,
-      ...this.form.value
-    });
+    if (this.form.valid) {
+      this.dialogRef.close({
+        ...this.event,
+        ...this.form.value
+      });
+    }
+  }
+
+  private dateRangeValidator(): ValidatorFn {
+    return (group: AbstractControl): { [key: string]: any } | null => {
+      const start = group.get('start')?.value;
+      const end = group.get('end')?.value;
+      return start && end && end < start ? { endBeforeStart: true } : null;
+    };
   }
 }

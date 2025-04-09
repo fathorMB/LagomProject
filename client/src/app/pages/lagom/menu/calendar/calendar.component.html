@@ -7,7 +7,8 @@
             <div class="calendar-bg relative text-black flex-none">
                 <div class="bg-app-bar absolute top-0 left-0 right-0 bottom-0 z-0 w-full h-full"></div>
                 <div class="w-full py-2 px-6 h-50 md:h-16 z-10 relative flex items-end">
-                    <div class="flex-auto flex flex-col lg:flex-row justify-between items-center">
+                    <!-- <div class="flex-auto flex flex-col lg:flex-row justify-between items-center"> old html that changes flex to make room for calendar vie buttons DAY, WEEK, MONTH -->
+                    <div class="flex-auto flex flex-row justify-between items-center">
                         <div class="headline text-lg capitalize">
                             {{ this.viewDate | calendarDate: this.view + "ViewTitle" : "it" }}
                         </div>
