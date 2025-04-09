@@ -30,6 +30,10 @@ export class CalendarCreateUpdateComponent implements OnInit {
   private readonly fb: UntypedFormBuilder = inject(UntypedFormBuilder);
   private readonly dialogRef: MatDialogRef<CalendarCreateUpdateComponent> = inject(MatDialogRef<CalendarCreateUpdateComponent>);
   
+  public readonly titleInputFormControlName: string = 'title';
+  public readonly startDatePickerFormControlName: string = 'start';
+  public readonly endDatePickerFormControlName: string = 'end';
+
   minDate = new Date();   // today
   maxDate = new Date(2125, 0, 31);
 
@@ -59,8 +63,8 @@ export class CalendarCreateUpdateComponent implements OnInit {
 
   private dateRangeValidator(): ValidatorFn {
     return (group: AbstractControl): { [key: string]: any } | null => {
-      const start = group.get('start')?.value;
-      const end = group.get('end')?.value;
+      const start = group.get(this.startDatePickerFormControlName)?.value;
+      const end = group.get(this.endDatePickerFormControlName)?.value;
       return start && end && end < start ? { endBeforeStart: true } : null;
     };
   }

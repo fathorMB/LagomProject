@@ -6,32 +6,32 @@
     <mat-divider class="text-border"></mat-divider>
 
     <mat-dialog-content>    
-        <div class="flex flex-col gap-y-2">                
+        <div class="flex flex-col gap-y-2">
             <mat-form-field>
                 <mat-label>Nome Evento</mat-label>
-                <input formControlName="title" matInput />
-                <mat-error *ngIf="form.get('title')?.hasError('required')">Title is required</mat-error>
+                <input [formControlName]="this.titleInputFormControlName" matInput />
+                <mat-error *ngIf="form.get(this.titleInputFormControlName)?.hasError('required')">Nome Evento richiesto</mat-error>
             </mat-form-field>
 
             <mat-form-field>
                 <mat-label>Data Inizio</mat-label>
-                <input formControlName="start" [matDatepicker]="startDatepicker" [min]="minDate" [max]="maxDate" matInput />
+                <input [formControlName]="this.startDatePickerFormControlName" [matDatepicker]="startDatepicker" [min]="minDate" [max]="maxDate" matInput />
                 <mat-datepicker-toggle [for]="startDatepicker" matIconSuffix></mat-datepicker-toggle>
                 <mat-datepicker #startDatepicker></mat-datepicker>
-                <mat-error *ngIf="form.get('start')?.hasError('required')">Start date is required</mat-error>
-                <mat-error *ngIf="form.get('start')?.hasError('matDatepickerMin')">Start must be after {{ minDate | date:'longDate' }}</mat-error>
-                <mat-error *ngIf="form.get('start')?.hasError('matDatepickerMax')">Start must be before {{ maxDate | date:'longDate' }}</mat-error>
+                <mat-error *ngIf="form.get(this.startDatePickerFormControlName)?.hasError('required')">Data Inizio richiesta</mat-error>
+                <mat-error *ngIf="form.get(this.startDatePickerFormControlName)?.hasError('matDatepickerMin')">Data Inizio essere dopo o lo stesso giorno di {{ minDate | date: 'dd/MM/yyyy' }}</mat-error>
+                <mat-error *ngIf="form.get(this.startDatePickerFormControlName)?.hasError('matDatepickerMax')">Data Inizio essere prima o lo stesso giorno di {{ maxDate | date: 'dd/MM/yyyy' }}</mat-error>
             </mat-form-field>
 
-            <mat-form-field class="">
+            <mat-form-field>
                 <mat-label>Data Fine</mat-label>
-                <input formControlName="end" [matDatepicker]="endDatepicker" [min]="form.get('start')?.value || minDate" [max]="maxDate" matInput />
+                <input [formControlName]="this.endDatePickerFormControlName" [matDatepicker]="endDatepicker" [min]="form.get(this.startDatePickerFormControlName)?.value || minDate" [max]="maxDate" matInput />
                 <mat-datepicker-toggle [for]="endDatepicker" matIconSuffix></mat-datepicker-toggle>
                 <mat-datepicker #endDatepicker></mat-datepicker>
-                <mat-error *ngIf="form.get('end')?.hasError('required')">End date is required</mat-error>
-                <mat-error *ngIf="form.get('end')?.hasError('matDatepickerMin')">End must be after {{ form.get('start')?.value | date:'longDate' }}</mat-error>
-                <mat-error *ngIf="form.get('end')?.hasError('matDatepickerMax')">End must be before {{ maxDate | date:'longDate' }}</mat-error>
-                <mat-error *ngIf="form.hasError('endBeforeStart')">End date must be after start date</mat-error>
+                <mat-error *ngIf="form.get(this.endDatePickerFormControlName)?.hasError('required')">Data Fine richiesta</mat-error>
+                <mat-error *ngIf="form.get(this.endDatePickerFormControlName)?.hasError('matDatepickerMin')">Data Fine deve essere dopo o lo stesso giorno di {{ form.get(this.startDatePickerFormControlName)?.value | date: 'dd/MM/yyyy' }}</mat-error>
+                <mat-error *ngIf="form.get(this.endDatePickerFormControlName)?.hasError('matDatepickerMax')">Data Fine deve essere prima o lo stesso giorno di {{ maxDate | date: 'dd/MM/yyyy' }}</mat-error>
+                <mat-error *ngIf="form.hasError('endBeforeStart')">Data Fine deve essere dopo o lo stesso giorno di Data Inizio</mat-error>
             </mat-form-field>
         </div>
     </mat-dialog-content>
